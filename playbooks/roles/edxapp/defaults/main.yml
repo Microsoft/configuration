@@ -412,7 +412,7 @@ EDXAPP_BULK_EMAIL_EMAILS_PER_TASK: 500
 # If using microsites this should point to the microsite repo
 EDXAPP_MICROSITE_ROOT_DIR: "{{ edxapp_app_dir }}/edx-microsite"
 # this dictionary defines what microsites are configured
-EDXAPP_MICROSITE_CONFIGURATION: {
+EDXAPP_MICROSITE_CONFIGURATION: 
     rex:
         domain_prefix: "rex" 
         university: "rex"
@@ -433,7 +433,7 @@ EDXAPP_MICROSITE_CONFIGURATION: {
         ALWAYS_REDIRECT_HOMEPAGE_TO_DASHBOARD_FOR_AUTHENTICATED_USER: false 
         course_email_from_addr: "rex@edx.com"
         SESSION_COOKIE_DOMAIN: "rex.localhost"
-        }
+        
 # Instructor code that will not be run in the code sandbox
 EDXAPP_COURSES_WITH_UNSAFE_CODE: []
 EDXAPP_SESSION_COOKIE_DOMAIN: ""
