@@ -86,18 +86,6 @@
     - install
     - install:code
 
-- name: checkout microsite-theming
-  git:
-    dest: "edx/app/edxapp/edx-microsite"
-    repo: "{{ edxapp_microsite_theme_source_repo }}"
-    version: "{{ edxapp_microsite_theme_version }}"
-    accept_hostkey: yes
-  become_user: "{{ edxapp_user }}"
-  tags:
-    - install
-    - install:code
-
-
 - name: Stat each requirements file with Github URLs to ensure it exists
   stat:
     path: "{{ item }}"
