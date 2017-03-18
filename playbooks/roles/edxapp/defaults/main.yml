@@ -224,6 +224,7 @@ EDXAPP_FEATURES:
   ENABLE_INSTRUCTOR_ANALYTICS: false
   PREVIEW_LMS_BASE: "{{ EDXAPP_PREVIEW_LMS_BASE }}"
   ENABLE_GRADE_DOWNLOADS: true
+  USE_MICROSITES: "{{ EDXAPP_USE_MICROSITES }}"
   USE_CUSTOM_THEME: "{{ edxapp_use_custom_theme }}"
   ENABLE_MKTG_SITE: "{{ EDXAPP_ENABLE_MKTG_SITE }}"
   AUTOMATIC_AUTH_FOR_TESTING: "{{ EDXAPP_ENABLE_AUTO_AUTH }}"
@@ -412,7 +413,28 @@ EDXAPP_BULK_EMAIL_EMAILS_PER_TASK: 500
 # If using microsites this should point to the microsite repo
 EDXAPP_MICROSITE_ROOT_DIR: "{{ edxapp_app_dir }}/edx-microsite"
 # this dictionary defines what microsites are configured
-EDXAPP_MICROSITE_CONFIGURATION: {}
+EDXAPP_MICROSITE_CONFIGURATION: 
+    rex:
+        domain_prefix: "rex" 
+        university: "rex"
+        platform_name: "Rex Professional Education Online X Programs" 
+        logo_image_url:  'rex/images/header-logo.png'
+        ENABLE_MKTG_SITE:  false
+        SITE_NAME: "rex.localhost" 
+        course_org_filter: "RexX" 
+        course_about_show_social_links: false 
+        css_overrides_file:  'rex/css/style.css'
+        show_partners:  false
+        show_homepage_promo_video: false
+        course_index_overlay_text: "Explore Rex courses from leading universities" 
+        homepage_overlay_html:  "<h1>The Footure of Online Education</h1>"
+        favicon_path: 'foo/images/header-logo.png'
+        ENABLE_THIRD_PARTY_AUTH: false
+        ALLOW_AUTOMATED_SIGNUPS: true 
+        ALWAYS_REDIRECT_HOMEPAGE_TO_DASHBOARD_FOR_AUTHENTICATED_USER: false 
+        course_email_from_addr: "rex@edx.com"
+        SESSION_COOKIE_DOMAIN: "rex.localhost"
+        
 # Instructor code that will not be run in the code sandbox
 EDXAPP_COURSES_WITH_UNSAFE_CODE: []
 EDXAPP_SESSION_COOKIE_DOMAIN: ""
