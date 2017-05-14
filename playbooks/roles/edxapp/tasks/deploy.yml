@@ -57,6 +57,13 @@
   tags:
     - install
     - install:code
+    
+- name: change matplotlib installation
+  shell: cd {{ edxapp_code_dir }}
+  become_user: "{{ edxapp_user }}"
+  tags:
+    - install
+    - install:code    
 
 - name: git clean after checking out edx-platform
   shell: cd {{ edxapp_code_dir }} && git clean -xdf
@@ -64,6 +71,7 @@
   tags:
     - install
     - install:code
+    
 
 # edX supports two theme types, Comprehensive themes and the older
 # Stanford-style themes. They are mutually exclusive.
