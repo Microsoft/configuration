@@ -6,6 +6,8 @@ python:
 branches:
   only:
   - master
+  - oxa/master.fic
+  - oxa/devfic
 
 services:
   - docker
