@@ -132,3 +132,4 @@
     line: "127.0.0.1 localhost preview.localhost"
     state: present
   become: yes
+  ignore_errors: yes
