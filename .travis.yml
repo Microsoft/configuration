@@ -6,9 +6,9 @@ python:
 branches:
   only:
   - master
-  - oxa/master
+  - oxa/master.fic
+  - oxa/dev.fic
   - oxa/devfic
-  - oxa/df_testFixes
 
 services:
   - docker
