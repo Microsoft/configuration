@@ -27,7 +27,7 @@ helpful_message()
 {
     echo -e "\033[1;36m"
     echo -e "\n These plays have a dependency on values in (oxa-tools)/config/ \n Please ensure \n\t a) relevant changes have been merged in oxa-tools AND \n\t b) (edx-configuration)/tests/test_edx_east_roles.sh has the correct references."
-    echo -e " This failure case can be identified when if an error $1 ends with 'is undefined'\n"
+    echo -e " This failure case can be identified if an error $1 ends with 'is undefined'\n"
     echo -e '\033[0m'
 }
 
