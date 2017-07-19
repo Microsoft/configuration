@@ -31,8 +31,8 @@ helpful_message()
     echo -e '\033[0m'
 }
 
+echo "`helpful_message below`"
 set +e
-`helpful_message below`
 ansible-playbook -i localhost, -c local --tags edxapp_cfg edxapp.yml -e edxapp_user=`whoami` -e edxapp_app_dir=$output_dir -e edxapp_code_dir=$output_dir -e EDXAPP_CFG_DIR=$output_dir \
     -e@server-vars.yml \
     -e@countries.yml \
@@ -41,7 +41,7 @@ ansible-playbook -i localhost, -c local --tags edxapp_cfg edxapp.yml -e edxapp_u
 
 returnCode=$?
 if [[ $returnCode != 0 ]] ; then
-    `helpful_message above`
+    echo "`helpful_message above`"
     exit $returnCode
 fi
 set -e
