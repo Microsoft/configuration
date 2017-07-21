@@ -3,9 +3,10 @@
 
 ## Windows
 *.bat    text eol=crlf
+*.ps1    text eol=crlf
 *.srt    text eol=crlf
 
-## Code
+## Source Code
 *.coffee text
 *.css    text
 *.htm    text
@@ -32,6 +33,18 @@
 *.tsx    text
 *.xml    text
 *.xhtml  text
+
+## CONFIGS
+*.bowerrc      text
+*.cnf          text
+*.conf         text
+*.config       text
+.gitattributes text
+.gitignore     text
+.htaccess      text
+*.npmignore    text
+*.yaml         text
+*.yml          text
 
 ## Python Binary files
 *.db     binary
