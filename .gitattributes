@@ -1,78 +1,87 @@
-# based on https://github.com/alexkaratarakis/gitattributes
+# inspired by https://github.com/alexkaratarakis/gitattributes
+#
+# list built using the following commands
+# files WITH extensions
+#   find . -type f -printf '%f\n' | grep -i "\." | sed 's|.*\.||' | grep -v -i "^\(db\|pkl\|pyc\|pyd\|pyo\|ai\|bmp\|eps\|gif\|ico\|jng\|jp2\|jpg\|jpeg\|jpx\|jxr\|pdf\|png\|psb\|psd\|svg\|graphml\|svgz\|tif\|tiff\|wbmp\|webp\|3gpp\|3gp\|as\|asf\|asx\|fla\|flv\|m4v\|mng\|mov\|mp4\|mpeg\|mpg\|ogv\|swc\|swf\|webm\|7z\|gz\|jar\|rar\|tar\|zip\|mo\|bcmap\|ttf\|eot\|otf\|woff\|woff2\|dat\|dll\|exe\|wav\|cer\|config\|content\|crt\|cscfg\|csdef\|cur\|DS_Store\|fic\|idx\|key\|ogg\|lci\|lib\|man\|metagen\|mui\|snk\|winmd\|xsd\|csplugin\|exp\|nupkg\|pack\|pdb\|pem\|pfx\|pub\|ps1xml\|sample\|assemblylookupcache\|psd1\|notyaml\|mp99\|out\|noci\)$" | sort | uniq
+# files with NO extensions
+#   find . -type f | grep -v "\.git" | sed 's|.*/||' | grep -v "\." | grep -v -i "font\|default_mdsd\|rsa\|10periodic\|20unattended-upgrade\|bash_profile\|browsermob-proxy\|go\-agent\-env\-vars\|ec2_\|mongodb_\|munin\-edx\|rds_local\|route53_2_1_1_0\|ssh_key_forward\|tag_environment_prod\|util_map\|vimrc\|vpc_lookup\|x11_display"  | sort | uniq
 
-## Default
-* text   eol=lf
+ ## Default
+* text=auto
 
-## Python Binary files
-*.db     binary
-*.p      binary
-*.pkl    binary
-*.pyc    binary
-*.pyd    binary
-*.pyo    binary
+## Repo configurations
+.*coveragerc*   text eol=crlf
+.editorconfig   text eol=crlf
+.gitattributes  text eol=crlf
+.gitkeep        text eol=crlf
+.*ignore*       text eol=crlf
+.npmrc          text eol=crlf
+*.tf            text eol=crlf
+vim
+gitconfig       text eol=crlf
+inventory       text eol=crlf
+pylintrc*       text eol=crlf
 
-## GRAPHICS
-*.ai     binary
-*.bmp    binary
-*.eps    binary
-*.gif    binary
-*.ico    binary
-*.jng    binary
-*.jp2    binary
-*.jpg    binary
-*.jpeg   binary
-*.jpx    binary
-*.jxr    binary
-*.pdf    binary
-*.png    binary
-*.psb    binary
-*.psd    binary
-*.svg    binary
-*.svgz   binary
-*.tif    binary
-*.tiff   binary
-*.wbmp   binary
-*.webp   binary
+## Script
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+*.mk            text eol=crlf
+*.patch         text eol=crlf
+*.ps1           text eol=crlf
+*.py            text eol=crlf
+*.sh            text eol=crlf
+Dockerfile      text eol=crlf
+Makefile        text eol=crlf
+makefile        text eol=crlf
+Vagrantfile     text eol=crlf
 
-## VIDEO
-*.3gpp   binary
-*.3gp    binary
-*.as     binary
-*.asf    binary
-*.asx    binary
-*.fla    binary
-*.flv    binary
-*.m4v    binary
-*.mng    binary
-*.mov    binary
-*.mp4    binary
-*.mpeg   binary
-*.mpg    binary
-*.ogv    binary
-*.swc    binary
-*.swf    binary
-*.webm   binary
+## Code
+*.c             text eol=crlf
+*.groovy        text eol=crlf
+*.php           text eol=crlf
+*.sql           text eol=crlf
 
-## ARCHIVES
-*.7z     binary
-*.gz     binary
-*.jar    binary
-*.rar    binary
-*.tar    binary
-*.zip    binary
+## Web
+*.coffee        text eol=crlf
+*.css           text eol=crlf
+*.html*         text eol=crlf
+*.less          text eol=crlf
+*.scss          text eol=crlf
 
-## Localization
-*.mo     binary
+## Web Templates
+*.mustache      text eol=crlf
+*.underscore    text eol=crlf
 
-## FONTS
-*.bcmap  binary
-*.ttf    binary
-*.eot    binary
-*.otf    binary
-*.woff   binary
-*.woff2  binary
-fonts    binary
-font-awesome binary
+## Settings, Data, and Declarative Scripts
+*.cfg           text eol=crlf
+*.cnf           text eol=crlf
+*.conf          text eol=crlf
+*.csv           text eol=crlf
+*.diff          text eol=crlf
+*.ini           text eol=crlf
+*.j2            text eol=crlf
+*.json          text eol=crlf
+*.sjson         text eol=crlf
+*.xml           text eol=crlf
+*.XML           text eol=crlf
+*.yaml          text eol=crlf
+*.yml           text eol=crlf
+config          text eol=crlf
 
-## Misc
-*.dat    binary
+## Documentation and Content
+*.example       text eol=crlf
+*.feature       text eol=crlf
+*.log           text eol=crlf
+*.md            text eol=crlf
+*.plain         text eol=crlf
+*.po            text eol=crlf
+*.properties    text eol=crlf
+*.rst           text eol=crlf
+*.srt           text eol=crlf
+*.txt*          text eol=crlf
+*.TXT           text eol=crlf
+*.vtt           text eol=crlf
+AUTHORS         text eol=crlf
+COPYING         text eol=crlf
+LICENSE         text eol=crlf
+README          text eol=crlf
