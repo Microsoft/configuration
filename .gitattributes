@@ -10,78 +10,78 @@
 * text=auto
 
 ## Repo configurations
-.*coveragerc*   text eol=crlf
-.editorconfig   text eol=crlf
-.gitattributes  text eol=crlf
-.gitkeep        text eol=crlf
-.*ignore*       text eol=crlf
-.npmrc          text eol=crlf
-*.tf            text eol=crlf
+.*coveragerc*   text eol=lf
+.editorconfig   text eol=lf
+.gitattributes  text eol=lf
+.gitkeep        text eol=lf
+.*ignore*       text eol=lf
+.npmrc          text eol=lf
+*.tf            text eol=lf
 vim
-gitconfig       text eol=crlf
-inventory       text eol=crlf
-pylintrc*       text eol=crlf
+gitconfig       text eol=lf
+inventory       text eol=lf
+pylintrc*       text eol=lf
 
 ## Script
-*.bat           text eol=crlf
-*.cmd           text eol=crlf
-*.mk            text eol=crlf
-*.patch         text eol=crlf
-*.ps1           text eol=crlf
-*.py            text eol=crlf
-*.sh            text eol=crlf
-Dockerfile      text eol=crlf
-Makefile        text eol=crlf
-makefile        text eol=crlf
-Vagrantfile     text eol=crlf
+*.bat           text eol=lf
+*.cmd           text eol=lf
+*.mk            text eol=lf
+*.patch         text eol=lf
+*.ps1           text eol=lf
+*.py            text eol=lf
+*.sh            text eol=lf
+Dockerfile      text eol=lf
+Makefile        text eol=lf
+makefile        text eol=lf
+Vagrantfile     text eol=lf
 
 ## Code
-*.c             text eol=crlf
-*.groovy        text eol=crlf
-*.php           text eol=crlf
-*.sql           text eol=crlf
+*.c             text eol=lf
+*.groovy        text eol=lf
+*.php           text eol=lf
+*.sql           text eol=lf
 
 ## Web
-*.coffee        text eol=crlf
-*.css           text eol=crlf
-*.html*         text eol=crlf
-*.less          text eol=crlf
-*.scss          text eol=crlf
+*.coffee        text eol=lf
+*.css           text eol=lf
+*.html*         text eol=lf
+*.less          text eol=lf
+*.scss          text eol=lf
 
 ## Web Templates
-*.mustache      text eol=crlf
-*.underscore    text eol=crlf
+*.mustache      text eol=lf
+*.underscore    text eol=lf
 
 ## Settings, Data, and Declarative Scripts
-*.cfg           text eol=crlf
-*.cnf           text eol=crlf
-*.conf          text eol=crlf
-*.csv           text eol=crlf
-*.diff          text eol=crlf
-*.ini           text eol=crlf
-*.j2            text eol=crlf
-*.json          text eol=crlf
-*.sjson         text eol=crlf
-*.xml           text eol=crlf
-*.XML           text eol=crlf
-*.yaml          text eol=crlf
-*.yml           text eol=crlf
-config          text eol=crlf
+*.cfg           text eol=lf
+*.cnf           text eol=lf
+*.conf          text eol=lf
+*.csv           text eol=lf
+*.diff          text eol=lf
+*.ini           text eol=lf
+*.j2            text eol=lf
+*.json          text eol=lf
+*.sjson         text eol=lf
+*.xml           text eol=lf
+*.XML           text eol=lf
+*.yaml          text eol=lf
+*.yml           text eol=lf
+config          text eol=lf
 
 ## Documentation and Content
-*.example       text eol=crlf
-*.feature       text eol=crlf
-*.log           text eol=crlf
-*.md            text eol=crlf
-*.plain         text eol=crlf
-*.po            text eol=crlf
-*.properties    text eol=crlf
-*.rst           text eol=crlf
-*.srt           text eol=crlf
-*.txt*          text eol=crlf
-*.TXT           text eol=crlf
-*.vtt           text eol=crlf
-AUTHORS         text eol=crlf
-COPYING         text eol=crlf
-LICENSE         text eol=crlf
-README          text eol=crlf
+*.example       text eol=lf
+*.feature       text eol=lf
+*.log           text eol=lf
+*.md            text eol=lf
+*.plain         text eol=lf
+*.po            text eol=lf
+*.properties    text eol=lf
+*.rst           text eol=lf
+*.srt           text eol=lf
+*.txt*          text eol=lf
+*.TXT           text eol=lf
+*.vtt           text eol=lf
+AUTHORS         text eol=lf
+COPYING         text eol=lf
+LICENSE         text eol=lf
+README          text eol=lf
