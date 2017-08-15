@@ -38,6 +38,10 @@ ansible-playbook -i localhost, -c local --tags edxapp_cfg edxapp.yml -e edxapp_u
     -e@languages.yml \
     -e@server-vars.yml \
     -e EDXAPP_PREVIEW_SITE_NAME=""
+    -e EDXAPP_SESSION_INACTIVITY_TIMEOUT_IN_SECONDS=""
+    -e EDXAPP_ALL_LANGUAGES_OVERRIDE=""
+    -e EDXAPP_RETRY_ACTIVATION_EMAIL_MAX_ATTEMPTS="" 
+    -e EDXAPP_RETRY_ACTIVATION_EMAIL_TIMEOUT=""
 
 returnCode=$?
 if [[ $returnCode != 0 ]] ; then
