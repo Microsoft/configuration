@@ -37,7 +37,11 @@ ansible-playbook -i localhost, -c local --tags edxapp_cfg edxapp.yml -e edxapp_u
     -e@countries.yml \
     -e@languages.yml \
     -e@server-vars.yml \
-    -e EDXAPP_PREVIEW_SITE_NAME=""
+    -e EDXAPP_PREVIEW_SITE_NAME="" \
+    -e EDXAPP_SESSION_INACTIVITY_TIMEOUT_IN_SECONDS="" \
+    -e EDXAPP_RETRY_ACTIVATION_EMAIL_MAX_ATTEMPTS="" \
+    -e EDXAPP_RETRY_ACTIVATION_EMAIL_TIMEOUT="" \
+    -e EDXAPP_X_FRAME_OPTIONS=""
 
 returnCode=$?
 if [[ $returnCode != 0 ]] ; then
