@@ -1103,7 +1103,6 @@ cms_env_config:
 # install dir for the edx-platform repo
 edxapp_code_dir: "{{ edxapp_app_dir }}/edx-platform"
 
-
 # gunicorn ports/hosts, these shouldn't need to be overridden
 edxapp_cms_gunicorn_port: 8010
 edxapp_cms_gunicorn_host: 127.0.0.1
