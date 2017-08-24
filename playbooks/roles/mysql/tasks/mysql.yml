@@ -62,6 +62,7 @@
     state: started
 
 - name: Update mysql root password "{{ EDXAPP_MYSQL_PASSWORD_ADMIN }}"
+  sudo: yes
   mysql_user:
     name: ''
     host: "{{ item }}"
