@@ -68,20 +68,18 @@
     name: mysql 
     state: started
 
-- name: update mysql root password
+- name: Update mysql root password
+  sudo: yes
   mysql_user:
-    name: ''
     host: "{{ item }}"
     login_host: "{{ EDXAPP_MYSQL_HOST }}"
-
     # try default auth (root and no password)
     check_implicit_admin: yes
-
     # try intended auth
     login_user: "{{ EDXAPP_MYSQL_USER_ADMIN }}"
     login_password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN }}"
-
     # sets password and access
+    name: "{{ EDXAPP_MYSQL_USER_ADMIN }}"
     password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN }}"
     priv: "*.*:ALL,GRANT"
   with_items:
