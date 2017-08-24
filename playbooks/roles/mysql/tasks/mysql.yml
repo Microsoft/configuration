@@ -61,9 +61,9 @@
     name: mysql
     state: started
 
-- name: Update mysql root password
+- name: Update mysql root password "{{ EDXAPP_MYSQL_PASSWORD_ADMIN }}"
   mysql_user:
-    name: ''
+    name: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN }}"
     host: "{{ item }}"
     login_host: "{{ EDXAPP_MYSQL_HOST }}"
     # try default auth (root and no password)
