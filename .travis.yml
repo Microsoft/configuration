@@ -9,7 +9,6 @@ branches:
   - oxa/master.fic
   - oxa/dev.fic
   - oxa/devfic
-  - odf_testFixes
 
 services:
   - docker
