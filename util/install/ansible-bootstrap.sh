@@ -48,7 +48,7 @@ PYTHON_BIN="${VIRTUAL_ENV}/bin"
 ANSIBLE_DIR="/tmp/ansible"
 CONFIGURATION_DIR="/tmp/configuration"
 EDX_PPA="deb http://ppa.edx.org precise main"
-EDX_PPA_KEY_SERVER="hkp://pgp.mit.edu:80"
+EDX_PPA_KEY_SERVER="keyserver.ubuntu.com"
 EDX_PPA_KEY_ID="B41E5E3969464050"
 
 cat << EOF
@@ -107,13 +107,9 @@ apt-get install -y software-properties-common python-software-properties
 # Add git PPA
 add-apt-repository -y ppa:git-core/ppa
 
-# For older distributions we need to install a PPA for Python 2.7.10
-if [[ "precise" = "${SHORT_DIST}" || "trusty" = "${SHORT_DIST}" ]]; then
-
-    # Add python PPA
-    apt-key adv --keyserver "${EDX_PPA_KEY_SERVER}" --recv-keys "${EDX_PPA_KEY_ID}"
-    add-apt-repository -y "${EDX_PPA}"
-fi
+# For older software we need to install our own PPA.
+apt-key adv --keyserver "${EDX_PPA_KEY_SERVER}" --recv-keys "${EDX_PPA_KEY_ID}"
+add-apt-repository -y "${EDX_PPA}"
 
 # Install python 2.7 latest, git and other common requirements
 # NOTE: This will install the latest version of python 2.7 and
