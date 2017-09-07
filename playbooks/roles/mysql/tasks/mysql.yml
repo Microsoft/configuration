@@ -71,7 +71,6 @@
 - name: Update mysql root password
   sudo: yes
   mysql_user:
-    host: "{{ item }}"
     login_host: "{{ EDXAPP_MYSQL_HOST }}"
     # try default auth (root and no password)
     check_implicit_admin: yes
@@ -82,6 +81,7 @@
     name: "root"
     password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN }}"
     priv: "*.*:ALL,GRANT"
+    host: "{{ item }}"
   with_items:
     - localhost
     - "{{ ansible_hostname }}"
@@ -89,7 +89,6 @@
 - name: Add/Update EDXAPP_MYSQL_USER_ADMIN user "{{ EDXAPP_MYSQL_USER_ADMIN }}"
   sudo: yes
   mysql_user:
-    host: "{{ item }}"
     login_host: "{{ EDXAPP_MYSQL_HOST }}"
     # try root auth
     login_user: "root"
@@ -98,6 +97,7 @@
     name: "{{ EDXAPP_MYSQL_USER_ADMIN }}"
     password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN }}"
     priv: "*.*:ALL,GRANT"
+    host: "{{ item }}"
   with_items:
     - localhost
     - "{{ ansible_hostname }}"
