@@ -71,7 +71,7 @@
 - name: Update mysql root password
   sudo: yes
   mysql_user:
-    login_host: "{{ EDXAPP_MYSQL_HOST }}"
+    login_host: "{{ item }}"
     # try default auth (root and no password)
     check_implicit_admin: yes
     # try intended auth
@@ -89,7 +89,7 @@
 - name: Add/Update EDXAPP_MYSQL_USER_ADMIN user "{{ EDXAPP_MYSQL_USER_ADMIN }}"
   sudo: yes
   mysql_user:
-    login_host: "{{ EDXAPP_MYSQL_HOST }}"
+    login_host: "{{ item }}"
     # try root auth
     login_user: "root"
     login_password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN }}"
@@ -106,7 +106,7 @@
   mysql_user: 
     name: '' 
     host: "{{ item }}"
-    login_host: "{{ EDXAPP_MYSQL_HOST }}"
+    login_host: "{{ item }}"
     login_user: "{{ EDXAPP_MYSQL_USER_ADMIN }}"
     login_password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN }}"
     state: absent
