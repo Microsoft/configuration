@@ -76,10 +76,10 @@
     check_implicit_admin: yes
     # try intended auth
     login_user: "root"
-    login_password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN | default('') }}"
+    login_password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN | default('', true) }}"
     # sets password and access
     name: "root"
-    password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN | default('') }}"
+    password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN | default('', true) }}"
     priv: "*.*:ALL,GRANT"
     host: "{{ item }}"
   with_items:
