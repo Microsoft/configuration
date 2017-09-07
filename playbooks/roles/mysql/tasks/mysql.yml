@@ -81,7 +81,9 @@
     name: "root"
     password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN | default('', true) }}"
     priv: "*.*:ALL,GRANT"
-    host: "{{ item }}"
+    host:
+      - localhost
+      - "{{ ansible_hostname }}"
   with_items:
     - localhost
     - "{{ ansible_hostname }}"
@@ -97,7 +99,9 @@
     name: "{{ EDXAPP_MYSQL_USER_ADMIN | default('root') }}"
     password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN | default('') }}"
     priv: "*.*:ALL,GRANT"
-    host: "{{ item }}"
+    host:
+      - localhost
+      - "{{ ansible_hostname }}"
   with_items:
     - localhost
     - "{{ ansible_hostname }}"
