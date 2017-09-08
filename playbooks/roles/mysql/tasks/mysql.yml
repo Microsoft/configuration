@@ -84,7 +84,6 @@
     name: "{{ EDXAPP_MYSQL_USER_ADMIN | default('root') }}"
     password: "{{ EDXAPP_MYSQL_PASSWORD_ADMIN | default('') }}"
     priv: "*.*:ALL,GRANT"
-    host_all: yes
 
 - name: Ensure Anonymous user(s) does not exist
   mysql_user:
