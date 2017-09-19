@@ -300,7 +300,10 @@
     - install:app-requirements
 
 - name: compiling all py files in the edx-platform repo
-  shell: "{{ edxapp_venv_bin }}/python -m compileall -q -x .git/.* {{ edxapp_code_dir }}"
+  # we ignore python that isn't used and safe to ignore
+  # 1 python meta-data in the git history
+  # 2 old versions of the node package js-yaml have a folder called pyyaml-src that contains broken python
+  shell: "{{ edxapp_venv_bin }}/python -m compileall -q -x '.git/.*|pyyaml-src/.*' {{ edxapp_code_dir }}"
   become_user: "{{ edxapp_user }}"
   tags:
     - install
