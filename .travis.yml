@@ -10,7 +10,7 @@ branches:
   - oxa/dev.fic
   - oxa/devfic
   - oxa/release.fic
-  - firstHalf4
+  - df_btelnes_mimesniffing3
 
 services:
   - docker
