@@ -10,6 +10,10 @@ branches:
   - oxa/dev.fic
   - oxa/devfic
   - oxa/release.fic
+<<<<<<< HEAD
+=======
+  - firstHalf4
+>>>>>>> origin/d2r_3
 
 services:
   - docker
