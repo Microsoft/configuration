@@ -129,6 +129,6 @@
   lineinfile:
     dest: /etc/hosts
     regexp: "^127.0.0.1"
-    line: "127.0.0.1 localhost preview.localhost"
+    line: "127.0.0.1\tlocalhost preview.localhost"
     state: present
   become: yes
