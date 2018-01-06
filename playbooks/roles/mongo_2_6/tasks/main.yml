@@ -90,15 +90,26 @@
     - install
     - install:configuration
 
-- name: enable mongod systemd unit on 16.04
-  systemd:
-    name: mongod
-    enabled: yes
-    daemon_reload: yes
-  when: ansible_distribution_release == 'xenial'
-  tags:
-    - install
-    - install:configuration
+- block:
+    - name: enable mongod systemd unit on 16.04
+      systemd:
+        name: mongod
+        enabled: yes
+        daemon_reload: yes
+      when: ansible_distribution_release == 'xenial'
+      tags:
+        - install
+        - install:configuration
+  rescue:
+    - name: enable mongod systemd unit on 16.04 b
+      systemd:
+        name: mongod
+        enabled: yes
+        daemon_reload: yes
+      when: ansible_distribution_release == 'xenial'
+      tags:
+        - install
+        - install:configuration
 
 - name: Stop mongod service
   service:
