@@ -9,6 +9,7 @@ branches:
   - oxa/master.fic
   - oxa/dev.fic
   - oxa/release.fic
+  - odf_ci
 
 services:
   - docker
