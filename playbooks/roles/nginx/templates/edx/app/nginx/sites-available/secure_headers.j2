@@ -4,12 +4,13 @@ add_header X-Content-Type-Options nosniff;
 # Prevent potential XSS Reflection attack
 add_header X-XSS-Protection "1; mode-block";
 
-# Allow any dynamic resources to load from the same origin.
+# Allow any dynamic resources to load from the same origin,
+# edx.org and microsoft.com.
 # Note that X-Content-Security-Policy is deprecated. The
 # Content-Security-Policy header value is currently a W3C
 # candidate recommendation but is supported within Edge,
 # Chrome, Firefox and Safari.
-add_header Content-Security-Policy "default-src 'self';";
+add_header Content-Security-Policy "default-src 'self' *.edx.org *.microsoft.com;";
 
 # Prevent click-jacking by disalowing pages from being
 # rendered within <frame>, <iframe> or <object>
