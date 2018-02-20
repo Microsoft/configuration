@@ -1,0 +1,16 @@
+# Prevent the browser from doing MIME-type sniffing
+add_header X-Content-Type-Options nosniff;
+
+# Prevent potential XSS Reflection attack
+add_header X-XSS-Protection "1; mode-block";
+
+# Allow any dynamic resources to load from the same origin.
+# Note that X-Content-Security-Policy is deprecated. The
+# Content-Security-Policy header value is currently a W3C
+# candidate recommendation but is supported within Edge,
+# Chrome, Firefox and Safari.
+add_header Content-Security-Policy "default-src 'self';";
+
+# Prevent click-jacking by disalowing pages from being
+# rendered within <frame>, <iframe> or <object>
+add_header X-Frame-Options SAMEORIGIN;
