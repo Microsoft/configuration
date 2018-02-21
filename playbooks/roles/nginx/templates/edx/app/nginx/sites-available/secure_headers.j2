@@ -10,7 +10,7 @@ add_header X-XSS-Protection "1; mode-block";
 # Content-Security-Policy header value is currently a W3C
 # candidate recommendation but is supported within Edge,
 # Chrome, Firefox and Safari.
-add_header Content-Security-Policy "default-src 'self' *.edx.org *.microsoft.com;";
+add_header Content-Security-Policy "default-src 'self' *.edx.org *.microsoft.com tags.tiqcdn.com az725175.vo.msecnd.net collect-us-east-1.tealiumiq.com mscom.demdex.net googleads.g.doubleclick.net www.google.com;";
 
 # Prevent click-jacking by disalowing pages from being
 # rendered within <frame>, <iframe> or <object>
