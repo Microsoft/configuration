@@ -19,6 +19,7 @@ NGINX_USERS:
 NGINX_ENABLE_SSL: False
 NGINX_REDIRECT_TO_HTTPS: False
 NGINX_HSTS_MAX_AGE: 31536000
+NGINX_X_CONTEXT_SECURITY_POLICY: "default-src 'self' *.edx.org *.{{ EDXAPP_SITE_NAME }} www.bing.com tags.tiqcdn.com az725175.vo.msecnd.net *.tealiumiq.com mscom.demdex.net googleads.g.doubleclick.net www.google.com;"
 # Set these to real paths on your
 # filesystem, otherwise nginx will
 # use a self-signed snake-oil cert
