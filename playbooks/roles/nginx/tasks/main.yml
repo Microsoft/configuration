@@ -129,6 +129,10 @@
     owner: root
     group: "{{ common_web_user }}"
     mode: "0640"
+  vars:
+    # Fixes missing variable msec which breaks Travis build.  This is related to a  
+    # newrelic-specific header which records the time when nginx handles a request.
+    msec: 0
   with_items: "{{ nginx_sites }}"
   notify: reload nginx
   tags:
