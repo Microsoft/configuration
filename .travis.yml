@@ -1,3 +1,6 @@
+sudo: required
+dist: trusty
+
 # Travis CI configuration file for running tests
 language: python
 python:
