@@ -27,7 +27,6 @@ before_install:
 install:
   - "pip install --allow-all-external -r requirements.txt"
   - "pip install --allow-all-external demjson"
-  - "pip install --upgrade tox"
 
 env:
   - MAKE_TARGET=test.syntax SHARD=0 SHARDS=1
