@@ -7,8 +7,11 @@
 # This allows the dockerfile to update /edx/app/edx_ansible/edx_ansible
 # with the currently checked-out configuration repo.
 
-FROM edxops/xenial-common:latest
+ARG BASE_IMAGE_TAG=latest
+FROM edxops/xenial-common:${BASE_IMAGE_TAG}
 MAINTAINER edxops
+USER root
+CMD ["/edx/app/supervisor/venvs/supervisor/bin/supervisord", "-n", "--configuration", "/edx/app/supervisor/supervisord.conf"]
 
 ARG CREDENTIALS_VERSION=master
 ARG REPO_OWNER=edx
@@ -25,5 +28,5 @@ RUN sudo /edx/app/edx_ansible/venvs/edx_ansible/bin/ansible-playbook credentials
     --extra-vars="CREDENTIALS_VERSION=$CREDENTIALS_VERSION" \
     --extra-vars="COMMON_GIT_PATH=$REPO_OWNER"
 
-USER root 
-CMD ["/edx/app/supervisor/venvs/supervisor/bin/supervisord", "-n", "--configuration", "/edx/app/supervisor/supervisord.conf"]
+
+EXPOSE 18150
