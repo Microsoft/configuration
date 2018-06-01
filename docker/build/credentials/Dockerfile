@@ -25,5 +25,5 @@ RUN sudo /edx/app/edx_ansible/venvs/edx_ansible/bin/ansible-playbook credentials
     --extra-vars="CREDENTIALS_VERSION=$CREDENTIALS_VERSION" \
     --extra-vars="COMMON_GIT_PATH=$REPO_OWNER"
 
-USER root 
+USER root
 CMD ["/edx/app/supervisor/venvs/supervisor/bin/supervisord", "-n", "--configuration", "/edx/app/supervisor/supervisord.conf"]
