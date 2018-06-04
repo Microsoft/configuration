@@ -29,4 +29,8 @@ RUN sudo /edx/app/edx_ansible/venvs/edx_ansible/bin/ansible-playbook discovery.y
     --extra-vars="discovery_user=root"
     
 USER root
+CMD ["nginx"]
 CMD ["/edx/app/supervisor/venvs/supervisor/bin/supervisord", "-n", "--configuration", "/edx/app/supervisor/supervisord.conf"]
+
+CMD ["touch /var/log/discovery-stderr.log && tail -f /var/log/discovery-stderr.log"]
+
