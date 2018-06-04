@@ -34,3 +34,7 @@ nginx
 # http://developers.redhat.com/blog/2014/05/05/running-systemd-within-docker-container/
 # Both daemon by default
 CMD ["/edx/app/supervisor/venvs/supervisor/bin/supervisord", "-n", "--configuration", "/edx/app/supervisor/supervisord.conf"]
+
+# Docker requires an active foreground task.  Tail the logs to appease Docker and
+# provide useful output for development
+tail -f /var/log/discovery-stderr.log -f /var/log/discovery-stdout.log
