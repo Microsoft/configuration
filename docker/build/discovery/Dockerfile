@@ -7,15 +7,19 @@
 # This allows the dockerfile to update /edx/app/edx_ansible/edx_ansible
 # with the currently checked-out configuration repo.
 
-FROM edxops/xenial-common:latest
-MAINTAINER edxops
+FROM edxops/xenial-common:latest 
+MAINTAINER edxops 
 
-ENV DISCOVERY_VERSION=master
-ENV REPO_OWNER=edx
+ENV DISCOVERY_VERSION=master 
+ENV REPO_OWNER=edx 
 
 ADD . /edx/app/edx_ansible/edx_ansible
-
 WORKDIR /edx/app/edx_ansible/edx_ansible/docker/plays
+
+RUN echo '{ "allow_root": true }' > /root/.bowerrc 
+
+RUN apt-get update 
+RUN apt install -y xvfb firefox gettext 
 
 COPY docker/build/discovery/ansible_overrides.yml /
 RUN sudo /edx/app/edx_ansible/venvs/edx_ansible/bin/ansible-playbook discovery.yml \
@@ -25,5 +29,5 @@ RUN sudo /edx/app/edx_ansible/venvs/edx_ansible/bin/ansible-playbook discovery.y
     --extra-vars="DISCOVERY_VERSION=$DISCOVERY_VERSION" \
     --extra-vars="COMMON_GIT_PATH=$REPO_OWNER"
 
-USER root 
+USER root
 CMD ["/edx/app/supervisor/venvs/supervisor/bin/supervisord", "-n", "--configuration", "/edx/app/supervisor/supervisord.conf"]
