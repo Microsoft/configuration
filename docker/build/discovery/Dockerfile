@@ -30,7 +30,3 @@ RUN sudo /edx/app/edx_ansible/venvs/edx_ansible/bin/ansible-playbook discovery.y
     
 USER root
 CMD ["/edx/app/supervisor/venvs/supervisor/bin/supervisord", "-n", "--configuration", "/edx/app/supervisor/supervisord.conf"]
-
-# Docker requires an active foreground task.  Tail the logs to appease Docker and
-# provide useful output for development
-/usr/bin/tail -f /var/log/discovery-stderr.log -f /var/log/discovery-stdout.log
