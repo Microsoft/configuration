@@ -22,7 +22,15 @@ COPY docker/build/discovery/ansible_overrides.yml /
 RUN sudo /edx/app/edx_ansible/venvs/edx_ansible/bin/ansible-playbook discovery.yml \
     -c local -i '127.0.0.1,' \
     -t 'install,assets,devstack' \
-    --extra-vars="@/ansible_overrides.yml"
-
+    --extra-vars="@/ansible_overrides.yml" \
+# Needed when sharing the volume with the host machine because node/bower drops
+# everything in the code directory by default.  So we get issues with permissions
+# on folders owned by the developer.    
+    --extra-vars="discovery_user=root"
+    
 USER root
+nginx
+# Need to start supervisord and nginx manually because systemd is hard to run on docker
+# http://developers.redhat.com/blog/2014/05/05/running-systemd-within-docker-container/
+# Both daemon by default
 CMD ["/edx/app/supervisor/venvs/supervisor/bin/supervisord", "-n", "--configuration", "/edx/app/supervisor/supervisord.conf"]
