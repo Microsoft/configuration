@@ -33,4 +33,4 @@ CMD ["/edx/app/supervisor/venvs/supervisor/bin/supervisord", "-n", "--configurat
 
 # Docker requires an active foreground task.  Tail the logs to appease Docker and
 # provide useful output for development
-tail -f /var/log/discovery-stderr.log -f /var/log/discovery-stdout.log
+/usr/bin/tail -f /var/log/discovery-stderr.log -f /var/log/discovery-stdout.log
