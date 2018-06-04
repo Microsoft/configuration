@@ -21,7 +21,8 @@ RUN apt install -y xvfb firefox gettext
 COPY docker/build/discovery/ansible_overrides.yml /
 RUN sudo /edx/app/edx_ansible/venvs/edx_ansible/bin/ansible-playbook discovery.yml \
     -c local -i '127.0.0.1,' \
-    -t 'install,assets,devstack' \
+    -t 'install:app-requirements,assets:gather,devstack,migrate' \
+    --extra-vars="migrate_db=yes" \
     --extra-vars="@/ansible_overrides.yml" \
 # Needed when sharing the volume with the host machine because node/bower drops
 # everything in the code directory by default.  So we get issues with permissions
@@ -32,5 +33,5 @@ USER root
 CMD ["nginx"]
 CMD ["/edx/app/supervisor/venvs/supervisor/bin/supervisord", "-n", "--configuration", "/edx/app/supervisor/supervisord.conf"]
 
-CMD ["touch /var/log/discovery-stderr.log && tail -f /var/log/discovery-stderr.log"]
+CMD ["touch", "/var/log/discovery-stderr.log", "&&", "tail", "-f", "/var/log/discovery-stderr.log"]
 
