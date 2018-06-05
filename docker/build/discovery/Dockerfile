@@ -19,10 +19,9 @@ RUN apt-get update
 RUN apt install -y xvfb firefox gettext 
 
 COPY docker/build/discovery/ansible_overrides.yml /
-RUN sudo /edx/app/edx_ansible/venvs/edx_ansible/bin/ansible-playbook discovery.yml \
+RUN sudo /edx/app/edx_ansible/venvs/edx_ansible/bin/ansible-playbook -vvv discovery.yml \
     -c local -i '127.0.0.1,' \
-    -t 'install:app-requirements,assets:gather,devstack,migrate' \
-    --extra-vars="migrate_db=yes" \
+    -t 'install,assets:gather,devstack' \
     --extra-vars="@/ansible_overrides.yml" \
 # Needed when sharing the volume with the host machine because node/bower drops
 # everything in the code directory by default.  So we get issues with permissions
