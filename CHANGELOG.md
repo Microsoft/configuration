@@ -1,6 +1,9 @@
 - Use Ansible 2.3.1.0 so that we can do shallow clones of tags.
 
 - Role: edxapp
+  - `EDXAPP_X_FRAME_OPTIONS` added in studio to prevent clickjacking.
+
+- Role: edxapp
   - Added `EDXAPP_X_FRAME_OPTIONS` to prevent click jacking in LMS.
 
 - git_clone:
