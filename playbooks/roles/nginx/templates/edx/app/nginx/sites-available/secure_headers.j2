@@ -15,7 +15,7 @@
   # whereas it does render as expected using X-Content-Security-Policy,
   # so we will leverage the older header until browser support catches
   # up with the standard.
-  add_header X-Content-Security-Policy "default-src 'self' *.edx.org *.microsoft.com www.bing.com tags.tiqcdn.com az725175.vo.msecnd.net *.tealiumiq.com mscom.demdex.net googleads.g.doubleclick.net www.google.com;";
+  add_header X-Content-Security-Policy "{{ NGINX_X_CONTENT_SECURITY_POLICY_HEADER }}";
 
   # Prevent click-jacking by disalowing pages from being
   # rendered within <frame>, <iframe> or <object>
