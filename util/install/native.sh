@@ -65,10 +65,13 @@ sudo -H pip install --upgrade virtualenv==15.2.0
 ##
 VERSION_VARS=(
     edx_platform_version
+    configuration_version
+)
+
+EDX_VERSION_VARS=(
     certs_version
     forum_version
     xqueue_version
-    configuration_version
     demo_version
     NOTIFIER_VERSION
     INSIGHTS_VERSION
@@ -89,6 +92,16 @@ for var in ${VERSION_VARS[@]}; do
     fi
 done
 
+for var in ${EDX_VERSION_VARS[@]}; do
+    # Each variable can be overridden by a similarly-named environment variable,
+    # or EDX_OPENEDX_RELEASE, if provided.
+    ENV_VAR=$(echo $var | tr '[:lower:]' '[:upper:]')
+    eval override=\${$ENV_VAR-\$EDX_OPENEDX_RELEASE}
+    if [ -n "$override" ]; then
+        EXTRA_VARS="-e $var=$override $EXTRA_VARS"
+    fi
+done
+
 # my-passwords.yml is the file made by generate-passwords.sh.
 if [[ -f my-passwords.yml ]]; then
     EXTRA_VARS="-e@$(pwd)/my-passwords.yml $EXTRA_VARS"
@@ -100,7 +113,7 @@ CONFIGURATION_VERSION=${CONFIGURATION_VERSION-$OPENEDX_RELEASE}
 ## Clone the configuration repository and run Ansible
 ##
 cd /var/tmp
-git clone https://github.com/edx/configuration
+git clone https://github.com/Microsoft/edx-configuration configuration
 cd configuration
 git checkout $CONFIGURATION_VERSION
 git pull
