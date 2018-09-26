@@ -30,7 +30,6 @@
     SANDBOX_ENABLE_INSIGHTS: true
     SANDBOX_ENABLE_RABBITMQ: true
     JOURNALS_ENABLED: false
-    ENABLE_KITCHEN_SINK_COURSE: true
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 4GB
@@ -64,8 +63,6 @@
       when: SANDBOX_ENABLE_ANALYTICS_API
     - role: insights
       when: SANDBOX_ENABLE_INSIGHTS
-    - role: oxa_demo_courses
-      when: ENABLE_KITCHEN_SINK_COURSE
     # not ready yet: - edx_notes_api
     - demo
     - oauth_client_setup
