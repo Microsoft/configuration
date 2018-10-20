@@ -841,6 +841,9 @@ EDXAPP_BLOCK_STRUCTURES_SETTINGS:
 
   PRUNING_ACTIVE: false
 
+# Third Party Backends
+EDXAPP_THIRD_PARTY_AUTH_BACKENDS: ''
+ 
 # Configuration needed for LMS to communicate with the Journals service
 JOURNALS_SERVICE_USER_EMAIL: "journals_worker@example.com"
 JOURNALS_SERVICE_USER_NAME: "journals_worker"
@@ -1194,6 +1197,8 @@ generic_env_config:  &edxapp_generic_env
       - ISSUER: "{{ EDXAPP_LMS_ISSUER }}"
         AUDIENCE: "{{ EDXAPP_JWT_AUDIENCE }}"
         SECRET_KEY: "{{ EDXAPP_JWT_SECRET_KEY }}"
+  THIRD_PARTY_AUTH_BACKENDS: "{{ EDXAPP_THIRD_PARTY_AUTH_BACKENDS }}"
+  
 
   #must end in slash (https://docs.djangoproject.com/en/1.4/ref/settings/#media-url)
   MEDIA_URL:  "{{ EDXAPP_MEDIA_URL }}/"
