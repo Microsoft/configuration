@@ -3,14 +3,8 @@
 # There is a bug with initializing multiple nodes in the HA cluster at once
 # http://rabbitmq.1065348.n5.nabble.com/Rabbitmq-boot-failure-with-quot-tables-not-present-quot-td24494.html
 
-- name: trust rabbit repository
-  apt_key: url={{ rabbitmq_apt_key }} state=present
-
 - name: install python-software-properties if debian
   apt: pkg={{ ",".join(rabbitmq_debian_pkgs) }} state=present
-
-- name: add rabbit repository
-  apt_repository: repo="{{ rabbitmq_repository }}" state=present update_cache=yes
 
 - name: fetch the rabbitmq server deb
   get_url: >
@@ -109,6 +103,9 @@
 
 - name: remove guest user
   rabbitmq_user: user="guest" state=absent
+  tags:
+    - users
+    - maintenance
 
 - name: add vhosts
   rabbitmq_vhost: name={{ item }} state=present
@@ -134,7 +131,7 @@
 - name: make queues mirrored
   shell: >
     /usr/sbin/rabbitmqctl -p {{ item }} set_policy HA "" '{"ha-mode":"all","ha-sync-mode":"automatic"}'
-  when: RABBITMQ_CLUSTERED or rabbitmq_clustered_hosts|length > 1
+  when: RABBITMQ_CLUSTERED_HOSTS|length > 1
   with_items: RABBITMQ_VHOSTS
   tags:
     - ha

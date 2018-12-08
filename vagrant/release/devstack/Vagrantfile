@@ -60,22 +60,34 @@ end
 # to a name and a file path, which are used for retrieving
 # a Vagrant box from the internet.
 openedx_releases = {
+  # Note: the devstack and fullstack boxes differ, because devstack had an issue
+  # that needed fixing, but it didn't affect fullstack.
   "named-release/dogwood.rc" => {
+    :name => "dogwood-devstack-2016-03-09", :file => "dogwood-devstack-2016-03-09.box",
+  },
+  "named-release/dogwood.1" => {
+    :name => "dogwood-devstack-2016-03-09", :file => "dogwood-devstack-2016-03-09.box",
+  },
+  "named-release/dogwood.2" => {
+    :name => "dogwood-devstack-2016-03-09", :file => "dogwood-devstack-2016-03-09.box",
+  },
+  "named-release/dogwood.3" => {
+    :name => "dogwood-devstack-2016-03-09", :file => "dogwood-devstack-2016-03-09.box",
+  },
+  "named-release/dogwood" => {
     :name => "dogwood-devstack-rc2", :file => "20151221-dogwood-devstack-rc2.box",
   },
-  "named-release/dogwood.rc2" => {
-    :name => "dogwood-devstack-rc2", :file => "20151221-dogwood-devstack-rc2.box",
-  },
-  "named-release/cypress" => {
-    :name => "cypress-devstack", :file => "cypress-devstack.box",
-  },
+  # Cypress is deprecated and unsupported
+  # "named-release/cypress" => {
+  #   :name => "cypress-devstack", :file => "cypress-devstack.box",
+  # },
   # Birch is deprecated and unsupported
   # "named-release/birch.2" => {
   #   :name => "birch-devstack-2", :file => "birch-2-devstack.box",
   # },
 }
 openedx_releases.default = {
-  :name => "dogwood-devstack-rc2", :file => "20151221-dogwood-devstack-rc2.box",
+  :name => "devstack-periodic-2016-05-16", :file => "devstack-periodic-2016-05-16.box",
 }
 rel = ENV['OPENEDX_RELEASE']
 

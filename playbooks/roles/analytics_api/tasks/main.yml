@@ -3,8 +3,8 @@
 # edX Configuration
 #
 # github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
 # license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
 #
 # Tasks for role analytics_api
@@ -66,8 +66,8 @@
 - name: migrate
   shell: >
     chdir={{ analytics_api_code_dir }}
-    DB_MIGRATION_USER={{ COMMON_MYSQL_MIGRATE_USER }}
-    DB_MIGRATION_PASS={{ COMMON_MYSQL_MIGRATE_PASS }}
+    DB_MIGRATION_USER='{{ COMMON_MYSQL_MIGRATE_USER }}'
+    DB_MIGRATION_PASS='{{ COMMON_MYSQL_MIGRATE_PASS }}'
     {{ analytics_api_home }}/venvs/{{ analytics_api_service_name }}/bin/python ./manage.py migrate --noinput
   sudo_user: "{{ analytics_api_user }}"
   environment: "{{ analytics_api_environment }}"

@@ -63,6 +63,9 @@ server {
     proxy_redirect off;
     proxy_pass http://{{ role_name }}_app_server;
   }
+
+# Prevent invalid display courseware in IE 10+ with high privacy settings
+  add_header P3P {{ '{{' }} NGINX_P3P_MESSAGE {{ '}}' }}
   
   # Nginx does not support nested condition or or conditions so
   # there is an unfortunate mix of conditonals here.
@@ -86,7 +89,7 @@ server {
   # Execute the actual redirect
   if ($do_redirect_to_https = "true")
   {
-  rewrite ^ https://$host$request_uri? permanent;
+  return 301 https://$host$request_uri;
   }
   {{ '{%' }} endif {{ '%}' }}
 }

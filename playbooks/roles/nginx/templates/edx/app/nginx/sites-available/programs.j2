@@ -53,12 +53,12 @@ server {
   # Execute the actual redirect
   if ($do_redirect_to_https = "true")
   {
-  rewrite ^ https://$host$request_uri? permanent;
+  return 301 https://$host$request_uri;
   }
   {% endif %}
 
   location ~ ^/static/(?P<file>.*) {
-    root {{ COMMON_DATA_DIR }}/{{ programs_service_name }};
+    root {{ PROGRAMS_DATA_DIR  }};
     try_files /staticfiles/$file =404;
 
     # Request that the browser use SSL for these connections. Repeated here
@@ -71,7 +71,22 @@ server {
     add_header Cache-Control "public; max-age=3600";
   }
 
+  location ~ ^/media/(?P<file>.*) {
+    root {{ PROGRAMS_DATA_DIR }};
+    try_files /media/$file =404;
+    # django / app always assigns new filenames so these can be cached forever.
+    add_header Cache-Control "public; max-age=31536000";
+  }
+
   location / {
+    {% if PROGRAMS_ENABLE_BASIC_AUTH|bool %}
+      {% include "basic-auth.j2" %}
+    {% endif %}
+    try_files $uri @proxy_to_app;
+  }
+
+  # The API should be secured with OAuth 2.0 or or JWT.
+  location /api {
     try_files $uri @proxy_to_app;
   }
 

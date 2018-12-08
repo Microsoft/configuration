@@ -45,7 +45,7 @@ server {
   # Execute the actual redirect
   if ($do_redirect_to_https = "true")
   {
-  rewrite ^ https://$host$request_uri? permanent;
+  return 301 https://$host$request_uri;
   }
   {% endif %}
   
@@ -57,7 +57,9 @@ server {
   error_log {{ nginx_log_dir }}/kibana.error.log error;
 
   # Access restriction
-  {% include "basic-auth.j2" %}
+  {% if KIBANA_ENABLE_BASIC_AUTH|bool %}
+    {% include "basic-auth.j2" %}
+  {% endif %}
 
   # Set image format types to expire in a very long time
   location ~* ^.+\.(jpg|jpeg|gif|png|ico)$ {

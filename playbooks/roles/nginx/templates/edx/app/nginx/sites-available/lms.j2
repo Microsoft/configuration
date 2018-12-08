@@ -62,6 +62,10 @@ error_page {{ k }} {{ v }};
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
   {% endif %}
 
+  # Prevent invalid display courseware in IE 10+ with high privacy settings
+  add_header P3P '{{ NGINX_P3P_MESSAGE }}';
+
+
   # Nginx does not support nested condition or or conditions so
   # there is an unfortunate mix of conditonals here.
   {% if NGINX_REDIRECT_TO_HTTPS %}
@@ -84,7 +88,7 @@ error_page {{ k }} {{ v }};
   # Execute the actual redirect
   if ($do_redirect_to_https = "true")
   {
-  rewrite ^ https://$host$request_uri? permanent;
+  return 301 https://$host$request_uri;
   }
   {% endif %}
   
@@ -115,10 +119,12 @@ error_page {{ k }} {{ v }};
   }
 
   location / {
-    {% include "basic-auth.j2" %}
+    {% if EDXAPP_LMS_ENABLE_BASIC_AUTH|bool %}
+      {% include "basic-auth.j2" %}
+    {% endif %}
     {% if NGINX_EDXAPP_EMBARGO_CIDRS -%}
     if ( $embargo ) {
-      rewrite ^ /embargo;
+      return 302 /embargo;
     }
     {% endif -%}
     try_files $uri @proxy_to_lms_app;
@@ -198,11 +204,13 @@ error_page {{ k }} {{ v }};
   location /courses {
     {%- if EDXAPP_ENABLE_RATE_LIMITING -%}
     # Set Limit
-    limit_req zone=cookies burst={{ EDXAPP_COURSE_REQUEST_BURST_RATE }};
+    limit_req zone=cookies burst={{ EDXAPP_COURSES_REQUEST_BURST_RATE }};
     error_page  503 = /server/rate-limit.html;
     {%- endif -%}
 
-    {%- include "basic-auth.j2" %}
+    {% if EDXAPP_LMS_ENABLE_BASIC_AUTH|bool %}
+      {%- include "basic-auth.j2" %}
+    {% endif %}
     try_files $uri @proxy_to_lms_app;
   }
 

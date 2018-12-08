@@ -7,6 +7,10 @@
 COMMON_ENABLE_BASIC_AUTH: False
 COMMON_HTPASSWD_USER: edx
 COMMON_HTPASSWD_PASS: edx
+COMMON_BASIC_AUTH_EXCEPTIONS:
+  - 192.168.0.0/16
+  - 172.16.0.0/12
+
 # Turn on syncing logs on rotation for edx
 # application and tracking logs, must also
 # have the AWS role installed
@@ -91,6 +95,13 @@ COMMON_ENABLE_NEWRELIC_APP: False
 COMMON_ENABLE_MINOS: False
 COMMON_TAG_EC2_INSTANCE: False
 common_boto_version: '2.34.0'
+common_redhat_pkgs:
+  - ntp
+  - lynx
+  - logrotate
+  - rsyslog
+  - git
+  - unzip
 common_debian_pkgs:
   - ntp
   - lynx-cur
@@ -106,7 +117,7 @@ common_pip_pkgs:
   - pip==7.1.2
   - setuptools==18.3.2
   - virtualenv==13.1.2
-  - virtualenvwrapper
+  - virtualenvwrapper==4.7.1
 
 common_web_user: www-data
 common_web_group: www-data
@@ -167,3 +178,6 @@ common_close_all_caches: |
         cache = django_cache.cache
         if hasattr(cache, 'close'):
             cache.close()
+
+COMMON_TRACKING_LOG_ROTATION:
+  - size 1M

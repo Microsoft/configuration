@@ -3,23 +3,31 @@
 # edX Configuration
 #
 # github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
 # license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
 #
 #
 #
 # Tasks for role ecommerce
-# 
+#
 # Overview:
-# 
+#
 #
 # Dependencies:
 #
-# 
+#
 # Example play:
 #
 #
+
+# Copy themes directories.
+# When synchronizing we need to make sure that directory path ends with a trailing slash,
+# otherwise synchronize will copy the src directory instead of the files/dirs included within the src directory
+- name: synchronize theme directories
+  command: "rsync -a {{ THEMES_CODE_DIR }}/{{ ECOMMERCE_THEMES_DIR_NAME }}/ {{ ECOMMERCE_COMPREHENSIVE_THEME_DIR }}"
+  sudo_user: "{{ ecommerce_user }}"
+  when: ECOMMERCE_ENABLE_COMPREHENSIVE_THEMING and THEMES_CODE_DIR is defined
 
 - name: "add gunicorn configuration file"
   template: >
@@ -44,6 +52,7 @@
 - name: install node dependencies
   npm: executable={{ ecommerce_nodeenv_bin }}/npm path={{ ecommerce_code_dir }} production=yes
   sudo_user: "{{ ecommerce_user }}"
+  environment: "{{ ecommerce_environment }}"
 
 - name: install bower dependencies
   shell: >
@@ -54,8 +63,8 @@
 - name: migrate
   shell: >
     chdir={{ ecommerce_code_dir }}
-    DB_MIGRATION_USER={{ COMMON_MYSQL_MIGRATE_USER }}
-    DB_MIGRATION_PASS={{ COMMON_MYSQL_MIGRATE_PASS }}
+    DB_MIGRATION_USER='{{ COMMON_MYSQL_MIGRATE_USER }}'
+    DB_MIGRATION_PASS='{{ COMMON_MYSQL_MIGRATE_PASS }}'
     {{ ecommerce_venv_dir }}/bin/python ./manage.py migrate --noinput
   sudo_user: "{{ ecommerce_user }}"
   environment: "{{ ecommerce_environment }}"
@@ -77,6 +86,16 @@
   failed_when:
     - "'You already have countries in your database' not in command_result.stderr"
     - "command_result.rc != 0"
+
+- name: compile sass
+  shell: >
+    chdir={{ ecommerce_code_dir }}
+    {{ ecommerce_venv_dir }}/bin/python manage.py {{ item }}
+  sudo_user: "{{ ecommerce_user }}"
+  environment: "{{ ecommerce_environment }}"
+  with_items:
+    - "update_assets --skip-collect"
+  when: not devstack
 
 - name: run r.js optimizer
   shell: >
