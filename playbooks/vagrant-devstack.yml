@@ -17,6 +17,7 @@
     EDXAPP_LMS_BASE_SCHEME: http
   roles:
     - edx_ansible
+    - mysql
     - edxlocal
     - mongo
     - edxapp
@@ -26,6 +27,7 @@
     - ecommerce
     - ecommerce_worker
     - { role: 'rabbitmq', rabbitmq_ip: '127.0.0.1' }
+    - programs
     - role: notifier
       NOTIFIER_DIGEST_TASK_INTERVAL: "5"
     - role: ora

@@ -144,6 +144,7 @@ certs_version: $certs_version
 discern_version: $discern_version
 configuration_version: $configuration_version
 ECOMMERCE_VERSION: $ecommerce_version
+PROGRAMS_VERSION: $programs_version
 EDXAPP_STATIC_URL_BASE: $static_url_base
 EDXAPP_LMS_NGINX_PORT: 80
 EDXAPP_LMS_PREVIEW_NGINX_PORT: 80
@@ -282,7 +283,7 @@ if [[ $reconfigure != "true" && $server_type == "full_edx_installation" ]]; then
     for i in $roles; do
         if [[ ${deploy[$i]} == "true" ]]; then
             cat $extra_vars_file
-            run_ansible ${i}.yml -i "${deploy_host}," $extra_var_arg --user ubuntu --tags deploy
+            run_ansible ${i}.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
         fi
     done
 fi
@@ -296,8 +297,10 @@ if [[ $ret -ne 0 ]]; then
   exit $ret
 fi
 
-# Setup the OAuth2 clients
-run_ansible oauth_client_setup.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
+if [[ $run_oauth == "true" ]]; then
+    # Setup the OAuth2 clients
+    run_ansible oauth_client_setup.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
+fi
 
 # set the hostname
 run_ansible set_hostname.yml -i "${deploy_host}," -e hostname_fqdn=${deploy_host} --user ubuntu

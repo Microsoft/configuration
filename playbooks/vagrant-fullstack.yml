@@ -27,6 +27,7 @@
       nginx_default_sites:
       - lms
       - cms
+    - mysql
     - edxlocal
     - mongo
     - edxapp
@@ -40,4 +41,3 @@
     - certs
     - role: analytics_api
       when: ANALYTICS_API_GIT_IDENTITY
-    - edx_ansible

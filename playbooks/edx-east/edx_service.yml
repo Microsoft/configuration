@@ -14,6 +14,8 @@
         instance_profile_name: "{{ instance_profile_name }}"
         role_name: "{{ role_name }}"
         policies: "{{ role_policies }}"
+      tags:
+      - iam
 
     - name: Manage ELB security group
       ec2_group_local:
@@ -136,6 +138,8 @@
         subnets: "{{ created_elb_private_subnets.results|map(attribute='subnet_id')| list if ( item.scheme == 'internal' ) else elb_subnets}}"
         health_check: "{{ elb_healthcheck }}"
         listeners: "{{ elb_listeners }}"
+        cross_az_load_balancing: "{{ elb_enable_cross_zone_loadbalancing }}"
+        connection_draining_timeout: "{{ elb_draining_timeout }}"
       register: created_elbs
       with_items: elbs
       when: elbs is defined
@@ -163,19 +167,27 @@
     - debug: msg="{{ created_service_subnets.results|map(attribute='subnet_id')| list | join(',') }}"
       register: service_vpc_zone_identifier_string
 
+    - name: Transform tags into list dict format for the modules that expect it
+      util_map:
+        function: zip_to_listdict
+        input: "{{ asg_instance_tags }}"
+        args: ['key', 'value']
+      register: listdict_asg_instance_tags
+
+    - debug: msg="Instance Tags:{{ listdict_asg_instance_tags }}"
+
     - name: Manage ASG
       ec2_asg:
         profile: "{{ profile }}"
         region: "{{ aws_region }}"
         name: "{{ asg_name }}"
         launch_config_name: "{{ service_config.name }}"
-        load_balancers: "{{ elb_name }}"
         availability_zones: "{{ aws_availability_zones }}"
         min_size: "{{ asg_min_size }}"
         max_size: "{{ asg_max_size }}"
         desired_capacity: "{{ asg_desired_capacity }}"
         vpc_zone_identifier: "{{ service_vpc_zone_identifier_string.msg }}"
-        tags: "{{ asg_instance_tags }}"
+        tags: "{{ listdict_asg_instance_tags.function_output }}"
         load_balancers: "{{ created_elbs.results|map(attribute='elb.name')|list }}"
       register: asg
       when: auto_scaling_service
@@ -238,6 +250,10 @@
         tags: "{{ reformatted_asg_instance_tags.function_output }}"
       register: potential_existing_instances
 
+    - name: Compare requested instances vs. current instances
+      when: not auto_scaling_service and (potential_existing_instances.instances|length > create_instances | int)
+      fail: msg="This playbook will not shrink the number of instances. {{create_instances }} requested. There are currently {{ potential_existing_instances.instances|length }} instances that match this tag." 
+
     #This task will create the number of instances requested (create_instances parameter). 
     # By default, it will create instances equaling the number of subnets specified.
     #Modulo logic explained: The subnet specified will be the instance number modulo the number of subnets, 
@@ -258,9 +274,11 @@
         image: "{{ service_config.ami }}"
         instance_profile_name: "{{ instance_profile_name }}"
         volumes: "{{ service_config.volumes }}"
-      with_sequence: count={{ create_instances | default(created_service_subnets.results | length) }}
-      when: not auto_scaling_service and potential_existing_instances.instances|length == 0
+        ebs_optimized: "{{ service_config.ebs_optimized }}"
+      with_sequence: count={{ (create_instances | int - potential_existing_instances.instances|length) | default(created_service_subnets.results | length) }}
+      when: not auto_scaling_service and (potential_existing_instances.instances|length < create_instances | int)
       register: created_instances
+
 
     - name: Add new instances to host group
       add_host:
@@ -271,9 +289,8 @@
         ansible_ssh_user: ubuntu
         volumes: "{{ service_config.volumes }}"
       with_subelements:
-        - created_instances.results
+        - created_instances.results | default({})
         - instances
-      when: not auto_scaling_service and potential_existing_instances.instances|length == 0
 
 
 - name: Configure launched instances
