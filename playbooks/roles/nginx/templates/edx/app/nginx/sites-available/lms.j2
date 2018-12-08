@@ -8,12 +8,29 @@ upstream lms-backend {
     {% for host in nginx_lms_gunicorn_hosts %}
         server {{ host }}:{{ edxapp_lms_gunicorn_port }} fail_timeout=0;
     {% endfor %}
+
 }
 
 {%- if EDXAPP_ENABLE_RATE_LIMITING -%}
 # Make Zone
 limit_req_zone $cookie_{{ EDXAPP_SESSION_COOKIE_NAME }} zone=cookies:10m rate={{ EDXAPP_COURSES_REQUEST_RATE }};
-{%- endif -%}
+{%- endif %}
+
+
+{% if NGINX_EDXAPP_EMBARGO_CIDRS %}
+  {%- if NGINX_SET_X_FORWARDED_HEADERS %}
+geo $remote_addr $embargo {
+  {%- else %}
+geo $http_x_forwarded_for $embargo {
+  {% endif -%}
+  default 0;
+
+  {% for cidr in NGINX_EDXAPP_EMBARGO_CIDRS -%}
+  {{ cidr }} 1;
+  {% endfor %}
+
+}
+{%- endif %}
 
 server {
   # LMS configuration file for nginx, templated by ansible
@@ -77,21 +94,43 @@ error_page {{ k }} {{ v }};
 
   location / {
     {% include "basic-auth.j2" %}
+    {% if NGINX_EDXAPP_EMBARGO_CIDRS -%}
+    if ( $embargo ) {
+      rewrite ^ /embargo;
+    }
+    {% endif -%}
     try_files $uri @proxy_to_lms_app;
   }
+
+{% if NGINX_EDXAPP_EMBARGO_CIDRS %}
+  location /embargo {
+    try_files $uri @proxy_to_lms_app;
+  }
+{% endif %}
+
   # No basic auth for /segmentio/event
   location /segmentio/event {
     try_files $uri @proxy_to_lms_app;
   }
 
-  # The VAL api is accessed using OAUTH2 which
+  # The api is accessed using OAUTH2 which
   # uses the authorization header so we can't have
   # basic auth on it as well.
-  location /api/val {
+  location /api {
     try_files $uri @proxy_to_lms_app;
   }
 
+  # Need a separate location for the image uploads endpoint to limit upload sizes
+  location ~ ^/api/profile_images/[^/]*/[^/]*/upload$ {
+    try_files $uri @proxy_to_lms_app;
+    client_max_body_size {{ EDXAPP_PROFILE_IMAGE_MAX_BYTES + 1000 }};
+  }
+
   location /notifier_api {
+    try_files $uri @proxy_to_lms_app;
+  }
+
+  location /user_api {
     try_files $uri @proxy_to_lms_app;
   }
 
@@ -120,6 +159,12 @@ error_page {{ k }} {{ v }};
     {%- include "basic-auth.j2" %}
     try_files $uri @proxy_to_lms_app;
   }
+
+location ~ ^{{ EDXAPP_MEDIA_URL }}/(?P<file>.*) {
+    root {{ edxapp_media_dir }};
+    try_files /$file =404;
+    expires {{ EDXAPP_PROFILE_IMAGE_MAX_AGE }}s;
+}
 
   {% include "robots.j2" %}
   {% include "static-files.j2" %}
