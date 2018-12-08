@@ -3,8 +3,8 @@
 # edX Configuration
 #
 # github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
 # license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
 #
 ##
@@ -20,6 +20,8 @@
 # }
 
 dependencies:
+  - common
+  - supervisor
   - role: edx_service
     edx_service_name: "{{ edx_notes_api_service_name }}"
     edx_service_config: "{{ edx_notes_api_service_config }}"
@@ -29,4 +31,4 @@ dependencies:
     edx_service_packages:
       debian: "{{ edx_notes_api_debian_pkgs }}"
       redhat: "{{ edx_notes_api_redhat_pkgs }}"
-  - supervisor
+

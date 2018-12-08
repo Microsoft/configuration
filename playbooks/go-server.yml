@@ -1,0 +1,11 @@
+# This playbook installs go-server
+# https://www.go.cd/
+#
+
+- name: Install go-server
+  hosts: all
+  sudo: True
+  gather_facts: True
+  roles:
+  - aws
+  - go-server

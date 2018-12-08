@@ -7,6 +7,10 @@
 COMMON_ENABLE_BASIC_AUTH: False
 COMMON_HTPASSWD_USER: edx
 COMMON_HTPASSWD_PASS: edx
+COMMON_BASIC_AUTH_EXCEPTIONS:
+  - 192.168.0.0/16
+  - 172.16.0.0/12
+
 # Turn on syncing logs on rotation for edx
 # application and tracking logs, must also
 # have the AWS role installed
@@ -39,9 +43,14 @@ common_directories:
     
 COMMON_ENVIRONMENT: 'default_env'
 COMMON_DEPLOYMENT: 'default_deployment'
+COMMON_PIP_VERBOSITY: ''
 COMMON_PYPI_MIRROR_URL: 'https://pypi.python.org/simple'
 COMMON_NPM_MIRROR_URL: 'http://registry.npmjs.org'
 COMMON_UBUNTU_APT_KEYSERVER: "http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search="
+
+COMMON_EDX_PPA: "deb http://ppa.edx.org {{ ansible_distribution_release }} main"
+COMMON_EDX_PPA_KEY_SERVER: "keyserver.ubuntu.com"
+COMMON_EDX_PPA_KEY_ID: "69464050"
 
 #The git checkout url in most roles is constructed from these values
 #e.g. https://{{COMMON_GIT_MIRROR}}/{{COMMON_GIT_PATH}}/repo.git
@@ -88,28 +97,20 @@ COMMON_TAG_EC2_INSTANCE: False
 common_boto_version: '2.34.0'
 common_debian_pkgs:
   - ntp
-  - ack-grep
   - lynx-cur
   - logrotate
-  - mosh
   - rsyslog
-  - screen
-  - tmux
-  - tree
   - git
   - unzip
-  - python2.7
+  - "python2.7=2.7.10-0+{{ ansible_distribution_release }}1"
   - python-pip
   - python2.7-dev
-  # Not installed by default on vagrant ubuntu
-  # boxes
-  - curl
-
+  
 common_pip_pkgs:
   - pip==7.1.2
   - setuptools==18.3.2
   - virtualenv==13.1.2
-  - virtualenvwrapper
+  - virtualenvwrapper==4.7.1
 
 common_web_user: www-data
 common_web_group: www-data
@@ -161,3 +162,12 @@ common_close_all_caches: |
             cache = get_cache(cache_name)
             if hasattr(cache, 'close'):
                 cache.close()
+
+        # The 1.4 global default cache object needs to be closed also: 1.4
+        # doesn't ensure you get the same object when requesting the same
+        # cache. The global default is a separate Python object from the cache
+        # you get with get_cache("default"), so it will have its own connection
+        # that needs to be closed.
+        cache = django_cache.cache
+        if hasattr(cache, 'close'):
+            cache.close()

@@ -3,8 +3,8 @@
 # edX Configuration
 #
 # github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
 # license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
 #
 ##
@@ -43,13 +43,13 @@ ECOMMERCE_LANGUAGE_CODE: 'en-us'
 ECOMMERCE_EDX_API_KEY: 'PUT_YOUR_API_KEY_HERE'  # This should match the value set for edxapp
 ECOMMERCE_ECOMMERCE_URL_ROOT: 'http://localhost:8002'
 ECOMMERCE_LMS_URL_ROOT: 'http://127.0.0.1:8000'
-ECOMMERCE_JWT_SECRET_KEY: 'SET-ME-PLEASE' # This should match the value set for edxapp
+ECOMMERCE_JWT_SECRET_KEY: 'SET-ME-PLEASE'  # This should match the value set for edxapp
 ECOMMERCE_JWT_ALGORITHM: 'HS256'
 ECOMMERCE_JWT_VERIFY_EXPIRATION: true
 ECOMMERCE_JWT_DECODE_HANDLER: 'ecommerce.extensions.api.handlers.jwt_decode_handler'
 ECOMMERCE_JWT_ISSUERS:
   - '{{ ECOMMERCE_LMS_URL_ROOT }}/oauth2'
-  - 'ecommerce_worker'
+  - 'ecommerce_worker'  # Must match the value of JWT_ISSUER configured for the ecommerce worker.
 
 # Used to automatically configure OAuth2 Client
 ECOMMERCE_SOCIAL_AUTH_EDX_OIDC_KEY : 'ecommerce-key'
@@ -80,6 +80,7 @@ ECOMMERCE_PAYPAL_CANCEL_URL: '{{ ECOMMERCE_LMS_URL_ROOT }}/commerce/checkout/can
 ECOMMERCE_PAYPAL_ERROR_URL: '{{ ECOMMERCE_LMS_URL_ROOT }}/commerce/checkout/error/'
 
 ECOMMERCE_PAYMENT_PROCESSOR_CONFIG:
+  edx:
     cybersource:
       profile_id: '{{ ECOMMERCE_CYBERSOURCE_PROFILE_ID }}'
       merchant_id: '{{ ECOMMERCE_CYBERSOURCE_MERCHANT_ID }}'
@@ -111,6 +112,10 @@ ECOMMERCE_BROKER_HOST: '{{ ansible_default_ipv4.address }}'
 ECOMMERCE_BROKER_PORT: 5672
 ECOMMERCE_BROKER_URL: 'amqp://{{ ECOMMERCE_BROKER_USERNAME }}:{{ ECOMMERCE_BROKER_PASSWORD }}@{{ ECOMMERCE_BROKER_HOST }}:{{ ECOMMERCE_BROKER_PORT }}'
 
+ECOMMERCE_SUPPORT_URL: 'SET_ME_PLEASE'
+
+ECOMMERCE_DEFAULT_SITE_THEME: !!null
+
 ECOMMERCE_SERVICE_CONFIG:
   SECRET_KEY: '{{ ECOMMERCE_SECRET_KEY }}'
   TIME_ZONE: '{{ ECOMMERCE_TIME_ZONE }}'
@@ -128,6 +133,7 @@ ECOMMERCE_SERVICE_CONFIG:
     JWT_SECRET_KEY: '{{ ECOMMERCE_JWT_SECRET_KEY }}'
     JWT_ALGORITHM: '{{ ECOMMERCE_JWT_ALGORITHM }}'
     JWT_VERIFY_EXPIRATION: '{{ ECOMMERCE_JWT_VERIFY_EXPIRATION }}'
+    JWT_LEEWAY: 1
     JWT_DECODE_HANDLER: '{{ ECOMMERCE_JWT_DECODE_HANDLER }}'
     JWT_ISSUERS: '{{ ECOMMERCE_JWT_ISSUERS }}'
   SOCIAL_AUTH_EDX_OIDC_KEY: '{{ ECOMMERCE_SOCIAL_AUTH_EDX_OIDC_KEY }}'
@@ -149,7 +155,11 @@ ECOMMERCE_SERVICE_CONFIG:
   PLATFORM_NAME: '{{ ECOMMERCE_PLATFORM_NAME }}'
   THEME_SCSS: '{{ ECOMMERCE_THEME_SCSS }}'
 
+  SUPPORT_URL: '{{ ECOMMERCE_SUPPORT_URL }}'
+
   BROKER_URL: '{{ ECOMMERCE_BROKER_URL }}'
+
+  DEFAULT_SITE_THEME: '{{ ECOMMERCE_DEFAULT_SITE_THEME }}'
 
 
 ECOMMERCE_REPOS:
@@ -195,7 +205,7 @@ ecommerce_requirements:
 ecommerce_environment:
   DJANGO_SETTINGS_MODULE: "{{ ECOMMERCE_DJANGO_SETTINGS_MODULE }}"
   ECOMMERCE_CFG: "{{ COMMON_CFG_DIR }}/{{ ecommerce_service_name }}.yml"
-  PATH: "{{ ecommerce_venv_dir }}/bin:${PATH}"
+  PATH: "{{ ecommerce_venv_dir }}/bin:{{ ansible_env.PATH }}"
 
 #
 # OS packages

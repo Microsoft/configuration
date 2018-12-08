@@ -9,7 +9,7 @@ import requests
 try:
     import boto.ec2
     import boto.sqs
-    from boto.vpc import VPCConnection
+    import boto.vpc
     from boto.exception import NoAuthHandlerFound, EC2ResponseError
     from boto.sqs.message import RawMessage
     from boto.ec2.blockdevicemapping import BlockDeviceType, BlockDeviceMapping
@@ -90,7 +90,7 @@ def parse_args():
                         help="configuration-private repo gitref",
                         default="master")
     parser.add_argument('--configuration-private-repo', required=False,
-                        default="git@github.com:edx-ops/ansible-private",
+                        default="",
                         help="repo to use for private playbooks")
     parser.add_argument('-c', '--cache-id', required=True,
                         help="unique id to use as part of cache prefix")
@@ -132,6 +132,10 @@ def parse_args():
                         default=50,
                         help="The size of the root volume to use for the "
                              "abbey instance.")
+    parser.add_argument("--datadog-api-key", required=False,
+                        default="",
+                        help="The datadog api key used for capturing task"
+                             "and playbook metrics abbey instance.")
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-b', '--base-ami', required=False,
@@ -151,6 +155,18 @@ def get_instance_sec_group(vpc_id):
             'tag:play': args.play
         }
     )
+
+    if len(grp_details) < 1:
+        #
+        # try scheme for non-cloudformation builds
+        #
+
+        grp_details = ec2.get_all_security_groups(
+            filters={
+                'tag:play': args.play,
+                'tag:environment': args.environment,
+                'tag:deployment': args.deployment}
+        )
 
     if len(grp_details) < 1:
         sys.stderr.write("ERROR: Expected atleast one security group, got {}\n".format(
@@ -184,7 +200,7 @@ def create_instance_args():
     user data
     """
 
-    vpc = VPCConnection()
+    vpc = boto.vpc.connect_to_region(args.region)
     subnet = vpc.get_all_subnets(
         filters={
             'tag:aws:cloudformation:stack-name': stack_name,
@@ -198,14 +214,14 @@ def create_instance_args():
 
         subnet = vpc.get_all_subnets(
             filters={
-                'tag:cluster': args.play,
+                'tag:play': args.play,
                 'tag:environment': args.environment,
                 'tag:deployment': args.deployment}
         )
 
     if len(subnet) < 1:
-        sys.stderr.write("ERROR: Expected at least one subnet, got {}\n".format(
-            len(subnet)))
+        sys.stderr.write("ERROR: Expected at least one subnet, got {} for {}-{}-{}\n".format(
+            len(subnet), args.environment, args.deployment, args.play))
         sys.exit(1)
     subnet_id = subnet[0].id
     vpc_id = subnet[0].vpc_id
@@ -234,6 +250,7 @@ configuration_private_version="{configuration_private_version}"
 environment="{environment}"
 deployment="{deployment}"
 play="{play}"
+cluster="{play}"
 config_secure={config_secure}
 git_repo_name="configuration"
 git_repo="https://github.com/edx/$git_repo_name"
@@ -260,7 +277,7 @@ fi
 
 ANSIBLE_ENABLE_SQS=true
 SQS_NAME={queue_name}
-SQS_REGION=us-east-1
+SQS_REGION={region}
 SQS_MSG_PREFIX="[ $instance_id $instance_ip $environment-$deployment $play ]"
 PYTHONUNBUFFERED=1
 HIPCHAT_TOKEN={hipchat_token}
@@ -268,18 +285,22 @@ HIPCHAT_ROOM={hipchat_room}
 HIPCHAT_MSG_PREFIX="$environment-$deployment-$play: "
 HIPCHAT_FROM="ansible-$instance_id"
 HIPCHAT_MSG_COLOR=$(echo -e "yellow\\ngreen\\npurple\\ngray" | shuf | head -1)
+DATADOG_API_KEY={datadog_api_key}
 # environment for ansible
 export ANSIBLE_ENABLE_SQS SQS_NAME SQS_REGION SQS_MSG_PREFIX PYTHONUNBUFFERED
-export HIPCHAT_TOKEN HIPCHAT_ROOM HIPCHAT_MSG_PREFIX HIPCHAT_FROM HIPCHAT_MSG_COLOR
+export HIPCHAT_TOKEN HIPCHAT_ROOM HIPCHAT_MSG_PREFIX HIPCHAT_FROM
+export HIPCHAT_MSG_COLOR DATADOG_API_KEY
 
 if [[ ! -x /usr/bin/git || ! -x /usr/bin/pip ]]; then
     echo "Installing pkg dependencies"
     /usr/bin/apt-get update
     /usr/bin/apt-get install -y git python-pip python-apt \\
         git-core build-essential python-dev libxml2-dev \\
-        libxslt-dev curl --force-yes
+        libxslt-dev curl libmysqlclient-dev --force-yes
 fi
 
+# upgrade setuptools early to avoid no distributin errors
+pip install --upgrade setuptools==18.3.2
 
 rm -rf $base_dir
 mkdir -p $base_dir
@@ -382,7 +403,9 @@ rm -rf $base_dir
                 queue_name=run_id,
                 extra_vars_yml=extra_vars_yml,
                 secure_vars_file=secure_vars_file,
-                cache_id=args.cache_id)
+                cache_id=args.cache_id,
+                datadog_api_key=args.datadog_api_key,
+                region=args.region)
 
     mapping = BlockDeviceMapping()
     root_vol = BlockDeviceType(size=args.root_vol_size,
@@ -537,6 +560,8 @@ def create_ami(instance_id, name, description):
                 img.add_tag("environment", args.environment)
                 time.sleep(AWS_API_WAIT_TIME)
                 img.add_tag("deployment", args.deployment)
+                time.sleep(AWS_API_WAIT_TIME)
+                img.add_tag("cluster", args.play)
                 time.sleep(AWS_API_WAIT_TIME)
                 img.add_tag("play", args.play)
                 time.sleep(AWS_API_WAIT_TIME)

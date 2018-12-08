@@ -3,8 +3,8 @@
 # edX Configuration
 #
 # github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
 # license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
 #
 #
@@ -29,6 +29,14 @@
 #     gather_facts: True
 #     roles:
 #       - locust
+
+- name: install system packages
+  apt:
+    pkg: "{{ item }}"
+    state: "present"
+    update_cache: true
+    cache_valid_time: 3600
+  with_items: locust_debian_pkgs
 
 - name: install application requirements
   pip: >
@@ -64,3 +72,9 @@
     name={{ locust_service_name }}
   when: not disable_edx_services
   sudo_user: "{{ supervisor_service_user }}"
+
+- name: increase file descriptor limit of the system (Session Logout and Login would be required)
+  lineinfile:
+    dest: "{{ ulimit_conf_file }}"
+    line: "{{ item.domain }}  {{ item.type }}  {{ item.item }}  {{ item.value }}"
+  with_items: "{{ ulimit_config }}"

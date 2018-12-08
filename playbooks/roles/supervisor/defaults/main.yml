@@ -2,8 +2,8 @@
 # edX Configuration
 #
 # github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
 # license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
 #
 #
@@ -40,6 +40,8 @@ supervisor_cfg: "{{ supervisor_app_dir }}/supervisord.conf"
 # upstart service name and user
 supervisor_service: supervisor
 supervisor_service_user: "{{ common_web_user }}"
+
+supervisor_version: 3.2.3
 
 supervisor_pip_pkgs:
   - boto=="{{ common_boto_version }}"
