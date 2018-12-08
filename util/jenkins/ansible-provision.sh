@@ -23,7 +23,13 @@ export PYTHONUNBUFFERED=1
 export BOTO_CONFIG=/var/lib/jenkins/${aws_account}.boto
 
 run_ansible() {
-  ansible-playbook $@
+  if [[ "$VERBOSE" == "true" ]]; then
+    verbose_arg='-vvv'
+  else
+    verbose_arg=''
+  fi
+
+  ansible-playbook $verbose_arg $@
   ret=$?
   if [[ $ret -ne 0 ]]; then
     exit $ret
@@ -99,7 +105,7 @@ fi
 
 if [[ -z $ami ]]; then
   if [[ $server_type == "full_edx_installation" ]]; then
-    ami="ami-41f38d24"
+    ami="ami-9d80dbf7"
   elif [[ $server_type == "ubuntu_12.04" || $server_type == "full_edx_installation_from_scratch" ]]; then
     ami="ami-c15bebaa"
   elif [[ $server_type == "ubuntu_14.04(experimental)" ]]; then
@@ -117,6 +123,18 @@ fi
 
 if [[ -z $enable_datadog ]]; then
   enable_datadog="false"
+fi
+
+if [[ -z $performance_course ]]; then
+  performance_course="false"
+fi
+
+if [[ -z $demo_test_course ]]; then
+  demo_test_course="false"
+fi
+
+if [[ -z $edx_demo_course ]]; then
+  edx_demo_course="false"
 fi
 
 if [[ -z $enable_client_profiling ]]; then
@@ -138,20 +156,37 @@ forum_version: $forum_version
 notifier_version: $notifier_version
 xqueue_version: $xqueue_version
 xserver_version: $xserver_version
-ora_version: $ora_version
-ease_version: $ease_version
 certs_version: $certs_version
-discern_version: $discern_version
 configuration_version: $configuration_version
-ECOMMERCE_VERSION: $ecommerce_version
-PROGRAMS_VERSION: $programs_version
+
+edx_ansible_source_repo: ${configuration_source_repo}
+edx_platform_repo: ${edx_platform_repo}
+
+EDXAPP_COMPREHENSIVE_THEME_DIR: $edxapp_comprehensive_theme_dir
+
 EDXAPP_STATIC_URL_BASE: $static_url_base
 EDXAPP_LMS_NGINX_PORT: 80
 EDXAPP_LMS_PREVIEW_NGINX_PORT: 80
 EDXAPP_CMS_NGINX_PORT: 80
+
 ECOMMERCE_NGINX_PORT: 80
 ECOMMERCE_SSL_NGINX_PORT: 443
+ECOMMERCE_VERSION: $ecommerce_version
+
+PROGRAMS_NGINX_PORT: 80
+PROGRAMS_SSL_NGINX_PORT: 443
+PROGRAMS_VERSION: $programs_version
+
+CREDENTIALS_NGINX_PORT: 80
+CREDENTIALS_SSL_NGINX_PORT: 443
+CREDENTIALS_VERSION: $credentials_version
+
+COURSE_DISCOVERY_NGINX_PORT: 80
+COURSE_DISCOVERY_SSL_NGINX_PORT: 443
+COURSE_DISCOVERY_VERSION: $course_discovery_version
+
 NGINX_SET_X_FORWARDED_HEADERS: True
+NGINX_REDIRECT_TO_HTTPS: True
 EDX_ANSIBLE_DUMP_VARS: true
 migrate_db: "yes"
 openid_workaround: True
@@ -160,6 +195,10 @@ rabbitmq_refresh: True
 COMMON_HOSTNAME: $dns_name
 COMMON_DEPLOYMENT: edx
 COMMON_ENVIRONMENT: sandbox
+
+nginx_default_sites:
+  - lms
+
 # User provided extra vars
 $extra_vars
 EOF
@@ -207,6 +246,9 @@ USER_CMD_PROMPT: '[$name_tag] '
 COMMON_ENABLE_NEWRELIC_APP: $enable_newrelic
 COMMON_ENABLE_DATADOG: $enable_datadog
 FORUM_NEW_RELIC_ENABLE: $enable_newrelic
+ENABLE_PERFORMANCE_COURSE: $performance_course
+ENABLE_DEMO_TEST_COURSE: $demo_test_course
+ENABLE_EDX_DEMO_COURSE: $edx_demo_course
 EDXAPP_NEWRELIC_LMS_APPNAME: sandbox-${dns_name}-edxapp-lms
 EDXAPP_NEWRELIC_CMS_APPNAME: sandbox-${dns_name}-edxapp-cms
 EDXAPP_NEWRELIC_WORKERS_APPNAME: sandbox-${dns_name}-edxapp-workers
@@ -220,8 +262,19 @@ ECOMMERCE_ECOMMERCE_URL_ROOT: "https://ecommerce-${deploy_host}"
 ECOMMERCE_LMS_URL_ROOT: "https://${deploy_host}"
 ECOMMERCE_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
 
+PROGRAMS_LMS_URL_ROOT: "https://${deploy_host}"
 PROGRAMS_URL_ROOT: "https://programs-${deploy_host}"
 PROGRAMS_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
+
+CREDENTIALS_LMS_URL_ROOT: "https://${deploy_host}"
+CREDENTIALS_URL_ROOT: "https://credentials-${deploy_host}"
+CREDENTIALS_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
+COURSE_DISCOVERY_ECOMMERCE_API_URL: "https://ecommerce-${deploy_host}/api/v2"
+
+COURSE_DISCOVERY_OAUTH_URL_ROOT: "https://${deploy_host}"
+COURSE_DISCOVERY_URL_ROOT: "https://course-discovery-${deploy_host}"
+COURSE_DISCOVERY_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
+
 EOF
 fi
 
@@ -266,7 +319,7 @@ EOF
 fi
 
 declare -A deploy
-roles="edxapp forum ecommerce programs notifier xqueue xserver ora discern certs demo testcourses"
+roles="edxapp forum ecommerce programs credentials course_discovery notifier xqueue xserver certs demo testcourses"
 for role in $roles; do
     deploy[$role]=${!role}
 done
@@ -283,7 +336,7 @@ if [[ $reconfigure != "true" && $server_type == "full_edx_installation" ]]; then
     for i in $roles; do
         if [[ ${deploy[$i]} == "true" ]]; then
             cat $extra_vars_file
-            run_ansible ${i}.yml -i "${deploy_host}," $extra_var_arg --user ubuntu --tags deploy
+            run_ansible ${i}.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
         fi
     done
 fi
@@ -297,8 +350,10 @@ if [[ $ret -ne 0 ]]; then
   exit $ret
 fi
 
-# Setup the OAuth2 clients
-run_ansible oauth_client_setup.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
+if [[ $run_oauth == "true" ]]; then
+    # Setup the OAuth2 clients
+    run_ansible oauth_client_setup.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
+fi
 
 # set the hostname
 run_ansible set_hostname.yml -i "${deploy_host}," -e hostname_fqdn=${deploy_host} --user ubuntu

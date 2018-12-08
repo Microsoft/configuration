@@ -43,11 +43,15 @@ PROGRAMS_TIME_ZONE: 'UTC'
 PROGRAMS_LANGUAGE_CODE: 'en-us'
 
 # Used to automatically configure OAuth2 Client
-PROGRAMS_SOCIAL_AUTH_EDX_OIDC_KEY : 'some-secret'
-PROGRAMS_SOCIAL_AUTH_EDX_OIDC_SECRET : 'some-secret'
+PROGRAMS_SOCIAL_AUTH_EDX_OIDC_KEY : 'programs-key'
+PROGRAMS_SOCIAL_AUTH_EDX_OIDC_SECRET : 'programs-secret'
 PROGRAMS_SOCIAL_AUTH_REDIRECT_IS_HTTPS: false
 
 PROGRAMS_PLATFORM_NAME: 'Your Platform Name Here'
+
+# CORS
+# See: https://github.com/ottoyiu/django-cors-headers/.
+PROGRAMS_CORS_ORIGIN_WHITELIST: []
 
 PROGRAMS_SERVICE_CONFIG:
   SECRET_KEY: '{{ PROGRAMS_SECRET_KEY }}'
@@ -68,6 +72,7 @@ PROGRAMS_SERVICE_CONFIG:
 
   PLATFORM_NAME: '{{ PROGRAMS_PLATFORM_NAME }}'
 
+  CORS_ORIGIN_WHITELIST: '{{ PROGRAMS_CORS_ORIGIN_WHITELIST }}'
 
 PROGRAMS_REPOS:
   - PROTOCOL: "{{ COMMON_GIT_PROTOCOL }}"
@@ -90,11 +95,6 @@ PROGRAMS_GUNICORN_WORKER_CLASS: "gevent"
 programs_role_name: programs
 programs_venv_dir: "{{ programs_home }}/venvs/{{ programs_service_name }}"
 
-programs_environment:
-  DJANGO_SETTINGS_MODULE: "{{ PROGRAMS_DJANGO_SETTINGS_MODULE }}"
-  PROGRAMS_CFG: "{{ COMMON_CFG_DIR }}/{{ programs_service_name }}.yml"
-  PATH: "{{ programs_venv_dir }}/bin:${PATH}"
-
 programs_service_name: "programs"
 programs_user: "{{ programs_service_name }}"
 programs_home: "{{ COMMON_APP_DIR }}/{{ programs_service_name }}"
@@ -105,6 +105,11 @@ programs_nodeenv_bin: "{{ programs_nodeenv_dir }}/bin"
 programs_node_modules_dir: "{{ programs_code_dir }}/node_modules"
 programs_node_bin: "{{ programs_node_modules_dir }}/.bin"
 
+programs_environment:
+  DJANGO_SETTINGS_MODULE: "{{ PROGRAMS_DJANGO_SETTINGS_MODULE }}"
+  PROGRAMS_CFG: "{{ COMMON_CFG_DIR }}/{{ programs_service_name }}.yml"
+  PATH: "{{ programs_nodeenv_bin }}:{{ programs_venv_dir }}/bin:{{ ansible_env.PATH }}"
+
 programs_gunicorn_host: "127.0.0.1"
 programs_gunicorn_port: 8140
 programs_gunicorn_timeout: 300
@@ -114,7 +119,7 @@ programs_log_dir: "{{ COMMON_LOG_DIR }}/{{ programs_service_name }}"
 programs_requirements_base: "{{ programs_code_dir }}/requirements"
 programs_requirements:
   - production.txt
-
+  - optional.txt
 
 #
 # OS packages

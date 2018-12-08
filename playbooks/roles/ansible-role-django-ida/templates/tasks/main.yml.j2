@@ -19,24 +19,89 @@
     src: edx/app/{{ role_name }}/{{ role_name }}_gunicorn.py.j2
     dest: "{{ '{{' }} {{ role_name }}_home }}/{{ role_name }}_gunicorn.py"
   sudo_user: "{{ '{{' }} {{ role_name }}_user }}"
+  tags:
+    - install
+    - install:configuration
 
-- name: install application requirements
-  pip:
-    requirements: "{{ '{{' }} {{ role_name }}_requirements_base }}/{{ '{{' }} item }}"
-    virtualenv: "{{ '{{' }} {{ role_name|lower }}_venv_dir }}"
-    state: present
-  sudo_user: "{{ '{{' }} {{ role_name }}_user }}"
-  with_items: "{{ '{{' }} {{ role_name }}_requirements }}"
-
-- name: migrate
-  shell: >
-    chdir={{ '{{' }} {{ role_name }}_code_dir }}
-    DB_MIGRATION_USER={{ '{{' }} COMMON_MYSQL_MIGRATE_USER }}
-    DB_MIGRATION_PASS={{ '{{' }} COMMON_MYSQL_MIGRATE_PASS }}
-    {{ '{{' }} {{ role_name|lower }}_venv_dir }}/bin/python ./manage.py migrate --noinput
+- name: build virtualenv
+  command: "virtualenv {{ '{{' }} {{ role_name }}_venv_dir }}"
+  args:
+    creates: "{{ '{{' }} {{ role_name }}_venv_dir }}/bin/pip"
   sudo_user: "{{ '{{' }} {{ role_name }}_user }}"
   environment: "{{ '{{' }} {{ role_name }}_environment }}"
+  tags:
+    - install
+    - install:app-requirements
+
+- name: install application requirements
+  command: make requirements
+  args:
+    chdir: "{{ '{{' }} {{ role_name }}_code_dir }}"
+  sudo_user: "{{ '{{' }} {{ role_name }}_user }}"
+  environment: "{{ '{{' }} {{ role_name }}_environment }}"
+  tags:
+    - install
+    - install:app-requirements
+
+- name: install development requirements
+  command: make local-requirements
+  args:
+    chdir: "{{ '{{' }} {{ role_name }}_code_dir }}"
+  sudo_user: "{{ '{{' }} {{ role_name }}_user }}"
+  environment: "{{ '{{' }} {{ role_name }}_environment }}"
+  tags:
+    - devstack
+    - devstack:install
+
+- name: wait for database
+  wait_for:
+    host: "{{ '{{' }} {{ role_name|upper }}_DATABASES.default.HOST }}"
+    port: "{{ '{{' }} {{ role_name|upper }}_DATABASES.default.PORT }}"
+    delay: 2
+  tags:
+    - migrate
+    - migrate:install
+
+- name: create databases
+  mysql_db:
+    login_host: "{{ '{{' }} {{ role_name|upper }}_DATABASES.default.HOST }}"
+    login_user: "{{ '{{' }} {{ role_name|upper }}_DB_ADMIN_USER }}"
+    login_password: "{{ '{{' }} {{ role_name|upper }}_DB_ADMIN_PASSWORD }}"
+    db: "{{ '{{' }} {{ role_name|upper }}_DEFAULT_DB_NAME }}"
+    state: present
+    encoding: utf8
+  tags:
+    - migrate
+    - migrate:install
+
+- name: create database users
+  mysql_user:
+    login_host: "{{ '{{' }} {{ role_name|upper }}_DATABASES.default.HOST }}"
+    login_user: "{{ '{{' }} {{ role_name|upper }}_DB_ADMIN_USER }}"
+    login_password: "{{ '{{' }} {{ role_name|upper }}_DB_ADMIN_PASSWORD }}"
+    name: "{{ '{{' }} item.name }}"
+    host: "{{ '{{' }} {{ role_name|upper }}_MYSQL_MATCHER }}"
+    password: "{{ '{{' }} item.password }}"
+    priv: "{{ '{{' }} {{ role_name|upper }}_DEFAULT_DB_NAME }}.*:ALL"
+  with_items:
+    - name: "{{ '{{' }} {{ role_name|upper }}_DATABASES.default.USER }}"
+      password: "{{ '{{' }} {{ role_name|upper }}_DATABASES.default.PASSWORD }}"
+    - name: "{{ '{{' }} COMMON_MYSQL_MIGRATE_USER }}"
+      password: "{{ '{{' }} COMMON_MYSQL_MIGRATE_PASS }}"
+  tags:
+    - migrate
+    - migrate:install
+
+- name: migrate database
+  command: make migrate
+  args:
+    chdir: "{{ '{{' }} {{ role_name }}_code_dir }}"
+  sudo_user: "{{ '{{' }} {{ role_name }}_user }}"
+  environment: "{{ '{{' }} {{ role_name }}_migration_environment }}"
   when: migrate_db is defined and migrate_db|lower == "yes"
+  tags:
+    - migrate
+    - migrate:db
 
 - name: write out the supervisor wrapper
   template:
@@ -45,6 +110,9 @@
     mode: 0650
     owner: "{{ '{{' }} supervisor_user }}"
     group: "{{ '{{' }} common_web_user }}"
+  tags:
+    - install
+    - install:configuration
 
 - name: write supervisord config
   template:
@@ -53,6 +121,20 @@
     owner: "{{ '{{' }} supervisor_user }}"
     group: "{{ '{{' }} common_web_user }}"
     mode: 0644
+  tags:
+    - install
+    - install:configuration
+
+- name: write devstack script
+  template:
+    src: "edx/app/{{ role_name }}/devstack.sh.j2"
+    dest: "{{ '{{' }} {{ role_name }}_home }}/devstack.sh"
+    owner: "{{ '{{' }} supervisor_user }}"
+    group: "{{ '{{' }} common_web_user }}"
+    mode: 0744
+  tags:
+    - devstack
+    - devstack:install
 
 - name: setup the {{ role_name }} env file
   template:
@@ -61,6 +143,9 @@
     owner: "{{ '{{' }} {{ role_name }}_user }}"
     group: "{{ '{{' }} {{ role_name }}_user }}"
     mode: 0644
+  tags:
+    - install
+    - install:configuration
 
 - name: enable supervisor script
   file:
@@ -69,10 +154,16 @@
     state: link
     force: yes
   when: not disable_edx_services
+  tags:
+    - install
+    - install:configuration
 
 - name: update supervisor configuration
-  shell: "{{ '{{' }} supervisor_ctl }} -c {{ '{{' }} supervisor_cfg }} update"
+  command: "{{ '{{' }} supervisor_ctl }} -c {{ '{{' }} supervisor_cfg }} update"
   when: not disable_edx_services
+  tags:
+    - manage
+    - manage:start
 
 - name: create symlinks from the venv bin dir
   file:
@@ -80,9 +171,12 @@
     dest: "{{ '{{' }} COMMON_BIN_DIR }}/{{ '{{' }} item.split('.')[0] }}.{{ role_name }}"
     state: link
   with_items:
-  - python
-  - pip
-  - django-admin.py
+    - python
+    - pip
+    - django-admin.py
+  tags:
+    - install
+    - install:app-requirements
 
 - name: create symlinks from the repo dir
   file:
@@ -90,7 +184,20 @@
     dest: "{{ '{{' }} COMMON_BIN_DIR }}/{{ '{{' }} item.split('.')[0] }}.{{ role_name }}"
     state: link
   with_items:
-  - manage.py
+    - manage.py
+  tags:
+    - install
+    - install:app-requirements
+    
+- name: run collectstatic
+  command: make static
+  args:
+    chdir: "{{ '{{' }} {{ role_name }}_code_dir }}"
+  sudo_user: "{{ '{{' }} {{ role_name }}_user }}"
+  environment: "{{ '{{' }} {{ role_name }}_environment }}"
+  tags:
+    - assets
+    - assets:gather
 
 - name: restart the application
   supervisorctl: 
@@ -100,3 +207,27 @@
     name: "{{ '{{' }} {{ role_name }}_service_name }}"
   when: not disable_edx_services
   sudo_user: "{{ '{{' }} supervisor_service_user }}"
+  tags:
+    - manage
+    - manage:start
+
+- name: Copying nginx configs for {{ role_name }}
+  template: >
+    src=edx/app/nginx/sites-available/{{ role_name }}.j2
+    dest={{ '{{' }} nginx_sites_available_dir }}/{{ role_name }}
+    owner=root group={{ '{{' }} common_web_user }} mode=0640
+  notify: reload nginx
+  tags:
+    - install
+    - install:vhosts
+
+- name: Creating nginx config links for {{ role_name }}
+  file: >
+    src={{ '{{' }} nginx_sites_available_dir }}/{{ role_name  }}
+    dest={{ '{{' }} nginx_sites_enabled_dir }}/{{ role_name }}
+    state=link owner=root group=root
+  notify: reload nginx
+  tags:
+    - install
+    - install:vhosts
+

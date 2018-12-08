@@ -14,7 +14,7 @@
 # Creates users and scripts for ad-hoc reporting environments from your
 # ansible var files.  You would run this role as follows
 #
-# ansible-playbook -i 'reporting.example.com,' ./ad_hoc_reporting.yml -e@/var/path/common.yml -e@/vars/path/environnment-deployment.yml
+# ansible-playbook -i 'reporting.example.com,' ./ad_hoc_reporting.yml -e@/var/path/common_vars.yml -e@/vars/path/environnment-deployment.yml
 #
 # Dependencies:
 #   - aws
@@ -30,8 +30,8 @@
 
 - name: add the mongodb signing key
   apt_key:
-    id: 7F0CEB10
-    url: "{{ MONGODB_APT_KEY }}"
+    id: "{{ MONGODB_APT_KEY }}"
+    keyserver: "{{ MONGODB_APT_KEYSERVER }}"
     state: present
   tags:
     - install:system-requirements
@@ -148,3 +148,15 @@
     - scripts
     - scripts:mongo
     - install:code
+
+- name: install a global mongorc.js
+  template:
+    src: etc/mongorc.js.j2
+    dest: /etc/mongorc.js
+    mode: 0755
+    owner: root
+    group: root
+  tags:
+    - scripts
+    - scripts:mongo
+    - mongorc
