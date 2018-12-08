@@ -1,6 +1,6 @@
 - name: Deploy Analytics API
   hosts: all
-  sudo: True
+  become: True
   gather_facts: True
   vars:
     ENABLE_DATADOG: False
@@ -8,10 +8,10 @@
     ENABLE_NEWRELIC: False
     CLUSTER_NAME: 'analytics-api'
   roles:
+    - aws
     - role: nginx
       nginx_sites:
         - analytics_api
-    - aws
     - analytics_api
     - role: datadog
       when: COMMON_ENABLE_DATADOG

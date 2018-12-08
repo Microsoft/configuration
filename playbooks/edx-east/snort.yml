@@ -1,11 +1,12 @@
 - name: Deploy snort IDS
   hosts: all
-  sudo: True
+  become: True
   gather_facts: True
   vars:
     serial_count: 1
   serial: "{{ serial_count }}"
   roles:
+    - aws
     - snort
     - role: datadog
       when: COMMON_ENABLE_DATADOG

@@ -1,8 +1,9 @@
 - name: Deploy Antivirus Scanner
   hosts: all
-  sudo: True
+  become: True
   gather_facts: True
   roles:
+    - aws
     - antivirus
     - role: datadog
       when: COMMON_ENABLE_DATADOG

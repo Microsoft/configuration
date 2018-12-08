@@ -1,3 +1,19 @@
+- Role: discovery
+  - Course Discovery JWT configuration now takes a list of issuers instead of a single issuer.  This change is not backward compatible with older versions of course discovery.
+
+- Role: hadoop_common
+  - Enable log retention by default to assist with debugging. Now YARN will retain stdout and stderr logs produced by map reduce tasks for 24 hours. They can be retrieved by running "yarn logs -applicationId YOUR_APPLICATION_ID".
+
+- Role: rabbitmq
+  - Removed the RABBITMQ_CLUSTERED var and related tooling. The goal of the var was to be able to setup a cluster in the aws environment without having to know all the IPs of the cluster before hand.  It relied on the `hostvars` ansible varible to work correctly which it no longer does in 1.9.  This may get fixed in the future but for now, the "magic" setup doesn't work.
+  - Changed `rabbitmq_clustered_hosts` to RABBITMQ_CLUSTERED_HOSTS.
+
+- Role: edxapp
+  - Removed SUBDOMAIN_BRANDING and SUBDOMAIN_COURSE_LISTINGS variables
+
+- Role: ora
+  - Remove the ora1 role as support for it was deprecated in Cypress.
+  - Removed dependencies on ora throughout the playbooks / vagrantfiles.
 - Role: edxapp
   - Removed XmlModuleStore from the default list of modulestores for the LMS.
   - EDXAPP_XML_MAPPINGS variable no longer exists by default and is not used by the edxapp role.
@@ -124,3 +140,15 @@
 - Role: Edxapp
   - Added EDXAPP_LMS_AUTH_EXTRA and EDXAPP_CMS_AUTH_EXTRA for passing unique AUTH_EXTRA configurations to the LMS and CMS.
     Both variables default to EDXAPP_AUTH_EXTRA for backward compatibility
+
+- Role: ecommerce
+  - Renamed `ECOMMERCE_COMPREHENSIVE_THEME_DIR` to `ECOMMERCE_COMPREHENSIVE_THEME_DIRS`, `ECOMMERCE_COMPREHENSIVE_THEME_DIRS`
+    is now a list of directories. Change is backward incompatible.
+  - Renamed `COMPREHENSIVE_THEME_DIR` to `COMPREHENSIVE_THEME_DIRS`, `COMPREHENSIVE_THEME_DIRS` is now a list of directories.
+    Change is backward incompatible.
+
+- Role: Edxapp
+  - `EDXAPP_COMPREHENSIVE_THEME_DIR` is deprecated and is maintained for backward compatibility, `EDXAPP_COMPREHENSIVE_THEME_DIRS`
+    should be used instead which is a list of directories. `EDXAPP_COMPREHENSIVE_THEME_DIR` if present will have priority over `EDXAPP_COMPREHENSIVE_THEME_DIRS`
+  - `COMPREHENSIVE_THEME_DIR` is deprecated and is maintained for backward compatibility, `COMPREHENSIVE_THEME_DIRS` should be used
+    instead which is a list of directories. `COMPREHENSIVE_THEME_DIR` if present will have priority over `COMPREHENSIVE_THEME_DIRS`

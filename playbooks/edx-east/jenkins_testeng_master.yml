@@ -4,13 +4,13 @@
 
 - name: Configure instance(s)
   hosts: jenkins_master
-  sudo: True
+  become: True
   gather_facts: True
   vars:
     COMMON_DATA_DIR: "/mnt2"
     COMMON_ENABLE_DATADOG: True
     COMMON_ENABLE_SPLUNKFORWARDER: True
-    jenkins_jvm_args: "-Djava.awt.headless=true -Xmx7168m -XX:MaxPermSize=512m"
+    jenkins_jvm_args: "-Djava.awt.headless=true -Xmx8192m -XX:MaxPermSize=512m"
 
     SPLUNKFORWARDER_LOG_ITEMS:
       - source: '/var/lib/jenkins/jobs/*/builds/*/junitResult.xml'
@@ -46,7 +46,7 @@
         followSymlink: false
 
   roles:
-    - common
+    - aws
     - role: datadog
       when: COMMON_ENABLE_DATADOG
     - jenkins_master
@@ -56,4 +56,4 @@
     - role: splunkforwarder
       when: COMMON_ENABLE_SPLUNKFORWARDER
       tags: splunkonly
-      sudo: True
+      become: True
