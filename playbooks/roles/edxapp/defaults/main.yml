@@ -219,6 +219,11 @@ EDXAPP_ENABLE_CREDIT_API: false
 EDXAPP_CUSTOM_COURSES_EDX: false
 
 EDXAPP_ENABLE_SYSADMIN_DASHBOARD: false
+
+# Making the display of course discovery and dashboard tabs configurable
+EDXAPP_ENABLE_COURSE_DISCOVERY: true
+EDXAPP_ENABLE_DASHBOARD_TABS: true
+
 # This is different from lms/envs/common.py
 # We're turning it on in config because it needs a lot more configuration
 # support, such as settings.DATABASES and initial database creation which is
@@ -292,6 +297,8 @@ EDXAPP_FEATURES:
   ENABLE_SPECIAL_EXAMS: false
   ENABLE_OAUTH2_PROVIDER: "{{ EDXAPP_ENABLE_OAUTH2_PROVIDER }}"
   ENABLE_SYSADMIN_DASHBOARD: "{{ EDXAPP_ENABLE_SYSADMIN_DASHBOARD }}"
+  ENABLE_COURSE_DISCOVERY: : "{{ EDXAPP_ENABLE_COURSE_DISCOVERY }}"
+  ENABLE_DASHBOARD_TABS: : "{{ EDXAPP_ENABLE_DASHBOARD_TABS }}"
   ENABLE_MOBILE_REST_API: "{{ EDXAPP_ENABLE_MOBILE_REST_API }}"
   CUSTOM_COURSES_EDX: "{{ EDXAPP_CUSTOM_COURSES_EDX }}"
   ENABLE_CSMH_EXTENDED: "{{ EDXAPP_ENABLE_CSMH_EXTENDED }}"
