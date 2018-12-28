@@ -89,3 +89,11 @@
     - role: datadog-uninstall
       when: not COMMON_ENABLE_DATADOG
 
+    # Main EdX application
+    # https://github.com/edx/edx-platform
+    - role: rabbitmq
+      rabbitmq_ip: 127.0.0.1
+      when: SANDBOX_ENABLE_RABBITMQ
+    - role: elasticsearch
+      when: "'localhost' in EDXAPP_ELASTIC_SEARCH_CONFIG|map(attribute='host')"
+
