@@ -223,6 +223,20 @@ EDXAPP_ENABLE_CREDIT_API: false
 EDXAPP_CUSTOM_COURSES_EDX: false
 
 EDXAPP_ENABLE_SYSADMIN_DASHBOARD: false
+
+# Making the display of course discovery and dashboard tabs configurable
+EDXAPP_ENABLE_COURSE_DISCOVERY: true
+EDXAPP_ENABLE_DASHBOARD_TABS: true
+
+# Making Honor mode eligible for certificate
+EDXAPP_ENABLE_CERTIFICATES_FOR_HONOR_MODE: true
+
+# Social Django defaults to HTTP scheme when generating redirect_uri
+# It is therefore necessary to add this setting in order to support
+# changing the redirect_uri to HTTPS. Defaulting to False (default behavior)
+# and expecting client to override.
+EDXAPP_REDIRECT_IS_HTTPS: false
+
 # This is different from lms/envs/common.py
 # We're turning it on in config because it needs a lot more configuration
 # support, such as settings.DATABASES and initial database creation which is
@@ -296,6 +310,8 @@ EDXAPP_FEATURES:
   ENABLE_SPECIAL_EXAMS: false
   ENABLE_OAUTH2_PROVIDER: "{{ EDXAPP_ENABLE_OAUTH2_PROVIDER }}"
   ENABLE_SYSADMIN_DASHBOARD: "{{ EDXAPP_ENABLE_SYSADMIN_DASHBOARD }}"
+  ENABLE_COURSE_DISCOVERY: "{{ EDXAPP_ENABLE_COURSE_DISCOVERY }}"
+  ENABLE_DASHBOARD_TABS: "{{ EDXAPP_ENABLE_DASHBOARD_TABS }}"
   ENABLE_MOBILE_REST_API: "{{ EDXAPP_ENABLE_MOBILE_REST_API }}"
   CUSTOM_COURSES_EDX: "{{ EDXAPP_CUSTOM_COURSES_EDX }}"
   ENABLE_CSMH_EXTENDED: "{{ EDXAPP_ENABLE_CSMH_EXTENDED }}"
@@ -303,6 +319,7 @@ EDXAPP_FEATURES:
   SHOW_HEADER_LANGUAGE_SELECTOR: "{{ EDXAPP_SHOW_HEADER_LANGUAGE_SELECTOR }}"
   SHOW_FOOTER_LANGUAGE_SELECTOR: "{{ EDXAPP_SHOW_FOOTER_LANGUAGE_SELECTOR }}"
   ENABLE_COOKIE_CONSENT: "{{ EDXAPP_ENABLE_COOKIE_CONSENT }}"
+  ONLY_THIRD_PARTY_AUTH: "{{ EDXAPP_ONLY_THIRD_PARTY_AUTH }}"
 
 # This needs to be set to localhost
 # if xqueue is run on the same server
@@ -794,7 +811,7 @@ EDXAPP_SOCIAL_AUTH_SAML_SP_PUBLIC_CERT_DICT: {}
 EDXAPP_SESSION_SAVE_EVERY_REQUEST: false
 
 EDXAPP_SESSION_COOKIE_SECURE: false
-
+EDXAPP_ONLY_THIRD_PARTY_AUTH: false
 # TODO: bbeggs remove this before prod, temp fix to get load testing running
 EDXAPP_LMS_ALLOWED_HOSTS: ["*", "{{ EDXAPP_LMS_SITE_NAME }}", "{{ EDXAPP_PREVIEW_LMS_BASE }}"]
 EDXAPP_CMS_ALLOWED_HOSTS: ["*", "{{ EDXAPP_CMS_SITE_NAME }}"]
@@ -1112,6 +1129,7 @@ edxapp_generic_auth_config:  &edxapp_generic_auth
   FACEBOOK_API_VERSION: "{{ EDXAPP_FACEBOOK_API_VERSION }}"
   ENTERPRISE_SERVICE_WORKER_USERNAME: "{{ EDXAPP_ENTERPRISE_SERVICE_WORKER_USERNAME }}"
   BRANCH_IO_KEY: "{{ EDXAPP_BRANCH_IO_KEY }}"
+  REDIRECT_IS_HTTPS: "{{ EDXAPP_REDIRECT_IS_HTTPS }}"
 
 generic_cache_config: &default_generic_cache
   BACKEND:  'django.core.cache.backends.memcached.MemcachedCache'
@@ -1205,7 +1223,8 @@ generic_env_config:  &edxapp_generic_env
         SECRET_KEY: "{{ EDXAPP_JWT_SECRET_KEY }}"
   THIRD_PARTY_AUTH_BACKENDS: "{{ EDXAPP_THIRD_PARTY_AUTH_BACKENDS }}"
   
-
+  ENABLE_CERTIFICATES_FOR_HONOR_MODE : "{{ EDXAPP_ENABLE_CERTIFICATES_FOR_HONOR_MODE }}"
+  
   #must end in slash (https://docs.djangoproject.com/en/1.4/ref/settings/#media-url)
   MEDIA_URL:  "{{ EDXAPP_MEDIA_URL }}/"
   MEDIA_ROOT: "{{ edxapp_media_dir }}/"
