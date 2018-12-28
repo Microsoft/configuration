@@ -207,7 +207,10 @@ EDXAPP_API_ACCESS_MANAGER_EMAIL: "api-access@example.com"
 EDXAPP_API_ACCESS_FROM_EMAIL: "api-requests@example.com"
 EDXAPP_API_DOCUMENTATION_URL: "http://course-catalog-api-guide.readthedocs.io/en/latest/"
 EDXAPP_AUTH_DOCUMENTATION_URL: "http://course-catalog-api-guide.readthedocs.io/en/latest/authentication/index.html"
+
+# Settings for cookie banner
 EDXAPP_API_COOKIE_URL: ""
+EDXAPP_ENABLE_COOKIE_CONSENT: false 
 
 # Settings for affiliate cookie tracking
 EDXAPP_AFFILIATE_COOKIE_NAME: 'dev_affiliate_id'
@@ -299,6 +302,7 @@ EDXAPP_FEATURES:
   ENABLE_READING_FROM_MULTIPLE_HISTORY_TABLES: "{{ EDXAPP_ENABLE_READING_FROM_MULTIPLE_HISTORY_TABLES }}"
   SHOW_HEADER_LANGUAGE_SELECTOR: "{{ EDXAPP_SHOW_HEADER_LANGUAGE_SELECTOR }}"
   SHOW_FOOTER_LANGUAGE_SELECTOR: "{{ EDXAPP_SHOW_FOOTER_LANGUAGE_SELECTOR }}"
+  ENABLE_COOKIE_CONSENT: "{{ EDXAPP_ENABLE_COOKIE_CONSENT }}"
 
 # This needs to be set to localhost
 # if xqueue is run on the same server
