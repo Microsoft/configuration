@@ -109,7 +109,8 @@ error_page {{ k }} {{ v }};
 
   {% if NGINX_EDXAPP_ENABLE_MAINTENANCE %}
   location @maintenance {
-      rewrite ^(.*)$ /server/maintenance.html break;
+      root /edx/var/nginx/server-static;
+      rewrite ^(.*)$ /maintenance.html break;
   }
   {% endif %}
 
