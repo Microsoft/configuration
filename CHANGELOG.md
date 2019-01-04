@@ -1,3 +1,10 @@
+- Role: edxapp
+  - Added a new EDXAPP_MYSQL_CONN_MAX_AGE, default to 0.  Adjust it to change how long a connection is kept open
+  for reuse before it is closed.
+  - Set preload_app to False in gunicorn config for LMS and Studio.
+- Role: xqueue
+  - Changed `XQUEUE_RABBITMQ_TLS` default from `true` to `false`.
+
 - Role: credentials
   - Added `CREDENTIALS_EXTRA_APPS` to enable the inclusion of additional Django apps in the Credentials Service.
 - Role: common
@@ -203,11 +210,18 @@
 - Role: mongo_3_0
   - Changed MONGO_STORAGE_ENGINE to default to wiredTiger which is the default in 3.2 and 3.4 and what edX suggests be used even on 3.0.
     If you have a mmapv1 3.0 install, override MONGO_STORAGE_ENGINE to be mmapv1 which was the old default.
-  - Support parsing the replset JSON in 3.2 and 3.0 
+  - Support parsing the replset JSON in 3.2 and 3.0
 
 - Role: xqueue
-  - Added `EDXAPP_CELERY_BROKER_USE_SSL` to allow configuring celery to use TLS.
+  - Added `XQUEUE_RABBITMQ_TLS` to allow configuring xqueue to use TLS when connecting to the AMQP broker.
+  - Added `XQUEUE_RABBITMQ_VHOST` to allow configuring the xqueue RabbitMQ host.
+  - Added `XQUEUE_RABBITMQ_PORT` to allow configuring the RabbitMQ port.
 
 - Role: edxapp
-  - Added `XQUEUE_RABBITMQ_VHOST` to allow configuring the xqueue RabbitMQ host.
-  - Added `XQUEUE_RABBITMQ_PORT` and `XQUEUE_RABBITMQ_TLS` to allow configuring the RabbitMQ port, and enabling TLS respectively.
+  - Added `EDXAPP_CELERY_BROKER_USE_SSL` to allow configuring celery to use TLS.
+
+- Role: ecommerce
+  - Added `ECOMMERCE_ENTERPRISE_URL` for the `enterprise` API endpoint exposed by a new service `edx-enterprise` (currently hosted by `LMS`), which defaults to the existing setting `ECOMMERCE_LMS_URL_ROOT`.
+
+- Role: ecommerce
+  - Removed `SEGMENT_KEY` which is no longer used.  Segment key is now defined in DB configuration. (https://github.com/edx/ecommerce/pull/1121)
