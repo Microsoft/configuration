@@ -120,7 +120,7 @@ nginx_debian_pkgs:
   - python-passlib
 
 NGINX_EDXAPP_ENABLE_S3_MAINTENANCE: False
-NGINX_EDXAPP_ENABLE_MAINTENANCE: True
+NGINX_EDXAPP_ENABLE_MAINTENANCE: False
 nginx_default_error_page: "/server/server-error.html"
 nginx_default_maintenance_page: "/server/maintenance.html"
 NGINX_EDXAPP_ERROR_PAGES:
