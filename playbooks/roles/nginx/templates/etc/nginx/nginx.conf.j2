@@ -15,7 +15,7 @@ http {
 
         {% if NGINX_EDXAPP_ENABLE_MAINTENANCE %}
         map $host $maintenance {
-            default 1;
+            default 0;
         }
         {% endif %}
 
