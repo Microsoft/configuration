@@ -146,16 +146,18 @@ error_page {{ k }} {{ v }};
 
     {{ NGINX_EDXAPP_LMS_APP_EXTRA }}
   }
+  
+  {% if NGINX_EDXAPP_ENABLE_MAINTENANCE %}
+  location ~ ^/ {
+    if ($maintenance) {
+        return 503;
+    }
+  }
+  {% endif %}
 
   location / {
     {% if EDXAPP_LMS_ENABLE_BASIC_AUTH|bool %}
       {% include "basic-auth.j2" %}
-    {% endif %}
-
-    {% if NGINX_EDXAPP_ENABLE_MAINTENANCE %}
-    if ($maintenance) {
-        return 503;
-    }
     {% endif %}
 
     try_files $uri @proxy_to_lms_app;
