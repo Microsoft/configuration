@@ -94,7 +94,7 @@ NGINX_SERVER_HTML_FILES:
   - file: maintenance.html
     lang: "{{ NGINX_SERVER_ERROR_LANG }}"
     title: ''
-    msg: 'Sorry for the inconvenience but we&rsquo;re currently performing site maintenance. We&rsquo;ll be back online shortly.'
+    msg: 'Sorry for the inconvenience.  We are currently performing site maintenance. We&rsquo;ll be back online shortly.'
     img: "{{ NGINX_SERVER_MAINTENANCE_IMG }}"
     img_alt: "{{ NGINX_SERVER_ERROR_IMG_ALT }}"
     heading: 'We&rsquo;ll be back soon!'
