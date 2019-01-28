@@ -148,11 +148,11 @@ error_page {{ k }} {{ v }};
   }
   
   {% if NGINX_EDXAPP_ENABLE_MAINTENANCE %}
-  location ~ ^/ {
-    if ($maintenance) {
-        return 503;
-    }
-  }
+  #location ~ ^/ {
+  #  if ($maintenance) {
+  #      return 503;
+  #  }
+  #}
   {% endif %}
 
   location / {
