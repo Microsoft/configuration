@@ -1155,6 +1155,9 @@ edxapp_generic_auth_config:  &edxapp_generic_auth
   FACEBOOK_API_VERSION: "{{ EDXAPP_FACEBOOK_API_VERSION }}"
   ENTERPRISE_SERVICE_WORKER_USERNAME: "{{ EDXAPP_ENTERPRISE_SERVICE_WORKER_USERNAME }}"
   BRANCH_IO_KEY: "{{ EDXAPP_BRANCH_IO_KEY }}"
+  ORA2_FILEUPLOAD:
+    STORAGE_CLASS: "{{ EDXAPP_ORA2_STORAGE_CLASS | default(None) }}"
+    STORAGE_KWARGS: "{{ EDXAPP_ORA2_STORAGE_KWARGS | default(None) }}"
 
 generic_cache_config: &default_generic_cache
   BACKEND:  'django.core.cache.backends.memcached.MemcachedCache'
@@ -1198,9 +1201,6 @@ generic_env_config:  &edxapp_generic_env
   MICROSITE_ROOT_DIR: "{{ EDXAPP_MICROSITE_ROOT_DIR }}"
   MICROSITE_CONFIGURATION: "{{ EDXAPP_MICROSITE_CONFIGURATION }}"
   DEFAULT_FILE_STORAGE:  "{{ EDXAPP_DEFAULT_FILE_STORAGE }}"
-  ORA2_FILEUPLOAD:
-    STORAGE_CLASS: "{{ EDXAPP_ORA2_STORAGE_CLASS | default(None) }}"
-    STORAGE_KWARGS: "{{ EDXAPP_ORA2_STORAGE_KWARGS | default(None) }}"
   GRADES_DOWNLOAD:
     STORAGE_CLASS: "{{ EDXAPP_GRADE_STORAGE_CLASS | default(None) }}"
     STORAGE_KWARGS: "{{ EDXAPP_GRADE_STORAGE_KWARGS | default(None) }}"
