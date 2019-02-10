@@ -602,6 +602,12 @@ EDXAPP_ORA2_FILE_PREFIX: '{{ COMMON_ENVIRONMENT }}-{{ COMMON_DEPLOYMENT }}/ora2'
 EDXAPP_FILE_UPLOAD_STORAGE_BUCKET_NAME: '{{ EDXAPP_AWS_STORAGE_BUCKET_NAME }}'
 EDXAPP_FILE_UPLOAD_STORAGE_PREFIX: 'submissions_attachments'
 
+# Additional configuration for storage provider used by ORA2
+EDXAPP_ORA2_STORAGE_CLASS: 'django.core.files.storage.FileSystemStorage'
+EDXAPP_ORA2_STORAGE_KWARGS:
+  container: ''
+  expires: false
+
 EDXAPP_CODE_JAIL_LIMITS:
   # Limit the memory of the jailed process to something high but not
   # infinite (512MiB in bytes)
@@ -1192,6 +1198,9 @@ generic_env_config:  &edxapp_generic_env
   MICROSITE_ROOT_DIR: "{{ EDXAPP_MICROSITE_ROOT_DIR }}"
   MICROSITE_CONFIGURATION: "{{ EDXAPP_MICROSITE_CONFIGURATION }}"
   DEFAULT_FILE_STORAGE:  "{{ EDXAPP_DEFAULT_FILE_STORAGE }}"
+  ORA2_FILEUPLOAD:
+    STORAGE_CLASS: "{{ EDXAPP_ORA2_STORAGE_CLASS | default(None) }}"
+    STORAGE_KWARGS: "{{ EDXAPP_ORA2_STORAGE_KWARGS | default(None) }}"
   GRADES_DOWNLOAD:
     STORAGE_CLASS: "{{ EDXAPP_GRADE_STORAGE_CLASS | default(None) }}"
     STORAGE_KWARGS: "{{ EDXAPP_GRADE_STORAGE_KWARGS | default(None) }}"
