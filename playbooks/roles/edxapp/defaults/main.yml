@@ -1155,9 +1155,6 @@ edxapp_generic_auth_config:  &edxapp_generic_auth
   FACEBOOK_API_VERSION: "{{ EDXAPP_FACEBOOK_API_VERSION }}"
   ENTERPRISE_SERVICE_WORKER_USERNAME: "{{ EDXAPP_ENTERPRISE_SERVICE_WORKER_USERNAME }}"
   BRANCH_IO_KEY: "{{ EDXAPP_BRANCH_IO_KEY }}"
-  ORA2_FILEUPLOAD:
-    STORAGE_CLASS: "{{ EDXAPP_ORA2_STORAGE_CLASS | default(None) }}"
-    STORAGE_KWARGS: "{{ EDXAPP_ORA2_STORAGE_KWARGS | default(None) }}"
 
 generic_cache_config: &default_generic_cache
   BACKEND:  'django.core.cache.backends.memcached.MemcachedCache'
@@ -1250,6 +1247,9 @@ generic_env_config:  &edxapp_generic_env
         AUDIENCE: "{{ EDXAPP_JWT_AUDIENCE }}"
         SECRET_KEY: "{{ EDXAPP_JWT_SECRET_KEY }}"
   THIRD_PARTY_AUTH_BACKENDS: "{{ EDXAPP_THIRD_PARTY_AUTH_BACKENDS }}"
+  ORA2_FILEUPLOAD:
+    STORAGE_CLASS: "{{ EDXAPP_ORA2_STORAGE_CLASS | default(None) }}"
+    STORAGE_KWARGS: "{{ EDXAPP_ORA2_STORAGE_KWARGS | default(None) }}"
   
   ENABLE_CERTIFICATES_FOR_HONOR_MODE : "{{ EDXAPP_ENABLE_CERTIFICATES_FOR_HONOR_MODE }}"
   
