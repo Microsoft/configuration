@@ -194,4 +194,7 @@ NGINX_DJANGO_ADMIN_ACCESS_CIDRS: []
 
 NGINX_X_CONTENT_SECURITY_POLICY_HEADER: "default-src 'self' *.edx.org *.microsoft.com www.bing.com tags.tiqcdn.com az725175.vo.msecnd.net *.tealiumiq.com mscom.demdex.net googleads.g.doubleclick.net www.google.com;"
 
-  
+# Enable/Disable SSL forwarding for nginx
+# In some specific cases, requests being forwarded from nginx to gunicorn are downgraded to HTTP
+# Enabling SSL forwarding forces SSL for those forwarded requests
+NGINX_ENABLE_SSL_FORWARDING: "{{ EDXAPP_NGINX_ENABLE_SSL_FORWARDING|default(false) }}"
